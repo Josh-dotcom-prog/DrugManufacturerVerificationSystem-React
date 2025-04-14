@@ -1,14 +1,28 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
+    const [isNavVisible, setNavVisible] = useState(false);
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.pathname === '/manufacturers') {
+            setNavVisible(false);
+        } else {
+            setNavVisible(true);
+        }
+    }, [location.pathname]); // Run only when the path changes
+
     return (
-        <nav class="bg-green-800 text-white shadow-lg">
-            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <nav
+            className="bg-green-800 text-white shadow-lg"
+            style={{ display: isNavVisible ? 'block' : 'none' }}
+        >
+            <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                 {/* logo */}
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-pills text-white text-2xl"></i>
-                    <span class="text-xl font-bold">DMVS</span>
+                <div className="flex items-center space-x-2">
+                    <i className="fas fa-pills text-white text-2xl"></i>
+                    <span className="text-xl font-bold">DMVS</span>
                     <span className="hidden md:inline-block text-sm bg-green-600 px-2 py-1 rounded ml-2">
                         Manufacturer Portal
                     </span>
@@ -25,7 +39,7 @@ const Navbar = () => {
                 </div>
             </div>
         </nav>
-    )
-}
+    );
+};
 
-export default Navbar
+export default Navbar;

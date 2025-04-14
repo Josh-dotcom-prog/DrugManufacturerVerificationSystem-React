@@ -6,9 +6,10 @@ import Login from './Components/Auth/Login';
 import Signup from './Components/Auth/Signup';
 import Manufacturers from './Components/Manufacturers/Manufacturers';
 import Sidebar from "./Components/Sidebar/Sidebar";
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 
 const App = () => {
+
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
