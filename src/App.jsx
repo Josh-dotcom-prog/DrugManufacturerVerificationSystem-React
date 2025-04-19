@@ -9,21 +9,23 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParam
 const App = () => {
 
   return (
-
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <div className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Hero />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/manufacturers" element={<Manufacturers />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <Router>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <div className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Hero />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/manufacturers" element={<Manufacturers />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </BrowserRouter>
+
   )
 }
 
