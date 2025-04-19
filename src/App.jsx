@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParam
 const App = () => {
 
   return (
+
     <Router>
       <div className="flex flex-col min-h-screen">
         <Navbar />
