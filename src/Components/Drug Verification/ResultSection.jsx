@@ -1,7 +1,7 @@
 import React from 'react';
 
-const ResultsSection = ({ scanResult }) => {
-    const ResultsSection = ({ scanResult }) => {
+const ResultSection = ({ scanResult }) => {
+    const ResultSection = ({ scanResult }) => {
         // Mock verification function - in a real app, this would check against a database
         const verifyDrug = (code) => {
             // For demo purposes: if code contains "FAKE" or "INVALID" it's not authentic
@@ -123,4 +123,4 @@ const ResultsSection = ({ scanResult }) => {
     };
 };
 
-export default ResultsSection;
+export default ResultSection;
