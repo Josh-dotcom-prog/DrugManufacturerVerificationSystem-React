@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ManufacturersDashboard = () => {
+const Drugs = () => {
     return (
         <div class="flex h-screen overflow-hidden">
             <aside class="w-64 bg-white border-r border-gray-200 hidden md:block">
@@ -274,4 +274,4 @@ const ManufacturersDashboard = () => {
     )
 }
 
-export default ManufacturersDashboard
+export default Drugs

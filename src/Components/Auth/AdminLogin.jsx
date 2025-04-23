@@ -30,7 +30,7 @@ const AdminLogin = () => {
                     <div className="flex items-center justify-center mb-4">
                         <div className="rounded-full bg-black-100 p-3">
                             {/* Lock icon */}
-                            <i className="fas fa-lock text-black text-xl"></i>
+                            <i className="fas fa-pills text-black text-4xl"><span class="ml-4">DMVS</span></i>
                         </div>
                     </div>
                     <h2 className="text-2xl font-bold text-center text-gray-800">Admin Login</h2>

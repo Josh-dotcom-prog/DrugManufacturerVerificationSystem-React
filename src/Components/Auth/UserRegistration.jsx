@@ -30,7 +30,14 @@ const UserRegistration = () => {
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md overflow-hidden">
                 {/* Card Header */}
                 <div className="p-6 border-b">
-                    <h2 className="text-2xl font-bold text-center text-gray-800">User Registration</h2>
+                    <div className="flex items-center justify-center mb-4">
+                        <div className="rounded-full bg-black-100 p-3">
+                            {/* Lock icon */}
+                            <i className="fas fa-pills text-black text-4xl"></i>
+                        </div>
+                    </div>
+                    <h2 className="text-2xl font-bold text-center text-gray-800">Drug Manufacturer Verification System</h2>
+                    <p class="text-lg font-bold text-center text-gray-800">User Registration</p>
                 </div>
 
                 <form onSubmit={handleSubmit}>

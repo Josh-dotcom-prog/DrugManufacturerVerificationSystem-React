@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ManufacturersDashboard = () => {
+const Batches = () => {
     return (
         <div class="flex h-screen overflow-hidden">
             <aside class="w-64 bg-white border-r border-gray-200 hidden md:block">
@@ -33,7 +33,7 @@ const ManufacturersDashboard = () => {
             <main class="flex-1 overflow-y-auto">
                 {/* <div class="p-6"> */}
                 <div class="flex justify-between items-center mb-8 p-6 border-b border-gray-200">
-                    <h1 class="text-2xl font-bold text-gray-800">Manufacturer Dashboard</h1>
+                    <h1 class="text-2xl font-bold text-gray-800">Batches</h1>
                     <div class="flex items-center">
                         <div class="relative">
                             <button id="profileButton"
@@ -70,7 +70,7 @@ const ManufacturersDashboard = () => {
                 {/* <!-- Stats Cards --> */}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 p-6">
                     <div class="bg-white p-6 rounded-lg shadow-md relative overflow-hidden">
-                        <h3 class="text-gray-500 text-sm font-medium mb-2">TOTAL PRODUCTS</h3>
+                        <h3 class="text-gray-500 text-sm font-medium mb-2">TOTAL BATCHES</h3>
                         <p class="text-3xl font-bold mb-1">37</p>
                         <p class="text-green-600 text-sm flex items-center">
                             <i class="fas fa-arrow-up mr-1"></i> 2 new this month
@@ -274,4 +274,4 @@ const ManufacturersDashboard = () => {
     )
 }
 
-export default ManufacturersDashboard
+export default Batches
