@@ -7,11 +7,7 @@ const Signup = () => {
         licenseNumber: '',
         email: '',
         phone: '',
-        streetAddress: '',
-        city: '',
-        state: '',
-        postalCode: '',
-        district: '',
+        Address: '',
         password: '',
         confirmPassword: '',
         termsAccepted: false
@@ -95,52 +91,12 @@ const Signup = () => {
                             <label className="block text-gray-700 mb-2 font-bold">Manufacturer Address</label>
                             <input
                                 type="text"
-                                name="streetAddress"
-                                value={formData.streetAddress}
+                                name="Address"
+                                value={formData.Address}
                                 onChange={handleChange}
                                 placeholder="Street Address"
                                 className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none mb-3"
                             />
-                            <div className="grid grid-cols-2 gap-3">
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={formData.city}
-                                    onChange={handleChange}
-                                    placeholder="City"
-                                    className="px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
-                                />
-                                <input
-                                    type="text"
-                                    name="state"
-                                    value={formData.state}
-                                    onChange={handleChange}
-                                    placeholder="State/Province"
-                                    className="px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-3 mt-3">
-                                <input
-                                    type="text"
-                                    name="postalCode"
-                                    value={formData.postalCode}
-                                    onChange={handleChange}
-                                    placeholder="Postal Code"
-                                    className="px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
-                                />
-                                <select
-                                    name="district"
-                                    value={formData.district}
-                                    onChange={handleChange}
-                                    className="px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none bg-white"
-                                >
-                                    <option value="" disabled>District</option>
-                                    <option value="kla">Kampala</option>
-                                    <option value="msk">Masaka</option>
-                                    <option value="jja">Jinja</option>
-                                    <option value="srt">Soroti</option>
-                                </select>
-                            </div>
                         </div>
 
                         <div className="mb-4">

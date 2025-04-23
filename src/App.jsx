@@ -8,6 +8,7 @@ import Manufacturers from './Components/Manufacturers/ManufacturersDashboard';
 import ResultSection from "./Components/Drug Verification/ResultSection";
 import AdminDashboard from "./Components/Administrators/AdminDashboard";
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
+import UserRegistration from "./Components/Auth/UserRegistration";
 
 const App = () => {
 
@@ -25,6 +26,7 @@ const App = () => {
             <Route path="/adminlogin" element={<AdminLogin />} />
             <Route path="/admindashboard" element={<AdminDashboard />} />
             <Route path="/resultsection" element={<ResultSection />} />
+            <Route path="/userregistration" element={<UserRegistration />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
