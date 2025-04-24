@@ -13,18 +13,154 @@ const Signup = () => {
         termsAccepted: false
     });
 
+    const [errors, setErrors] = useState({
+        manufacturerName: '',
+        licenseNumber: '',
+        email: '',
+        phone: '',
+        Address: '',
+        password: '',
+        confirmPassword: '',
+        termsAccepted: ''
+    });
+
+    // Validate a single field
+    const validateField = (name, value) => {
+        let errorMessage = '';
+
+        switch (name) {
+            case 'manufacturerName':
+                if (!value.trim()) {
+                    errorMessage = 'Manufacturer name is required';
+                } else if (value.trim().length < 3) {
+                    errorMessage = 'Name must be at least 3 characters';
+                }
+                break;
+
+            case 'licenseNumber':
+                if (!value.trim()) {
+                    errorMessage = 'License number is required';
+                } else if (!/^[A-Za-z0-9-]+$/.test(value)) {
+                    errorMessage = 'License number should contain only letters, numbers and hyphens';
+                }
+                break;
+
+            case 'email':
+                if (!value.trim()) {
+                    errorMessage = 'Email is required';
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    errorMessage = 'Please enter a valid email address';
+                }
+                break;
+
+            case 'phone':
+                if (!value.trim()) {
+                    errorMessage = 'Phone number is required';
+                } else if (!/^\+?[0-9\s-()]{10,15}$/.test(value)) {
+                    errorMessage = 'Please enter a valid phone number';
+                }
+                break;
+
+            case 'Address':
+                if (!value.trim()) {
+                    errorMessage = 'Address is required';
+                } else if (value.trim().length < 5) {
+                    errorMessage = 'Please enter a complete address';
+                }
+                break;
+
+            case 'password':
+                if (!value) {
+                    errorMessage = 'Password is required';
+                } else if (value.length < 8) {
+                    errorMessage = 'Password must be at least 8 characters';
+                } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(value)) {
+                    errorMessage = 'Password must include uppercase, lowercase, and numbers';
+                }
+                break;
+
+            case 'confirmPassword':
+                if (!value) {
+                    errorMessage = 'Please confirm your password';
+                } else if (value !== formData.password) {
+                    errorMessage = 'Passwords do not match';
+                }
+                break;
+
+            case 'termsAccepted':
+                if (!value) {
+                    errorMessage = 'You must accept the terms and conditions';
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        return errorMessage;
+    };
+
+    // Handle input changes
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
+        const newValue = type === 'checkbox' ? checked : value;
+
         setFormData(prevData => ({
             ...prevData,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: newValue
+        }));
+
+        // Clear error when user starts typing
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            [name]: ''
         }));
     };
 
+    // Validate on blur
+    const handleBlur = (e) => {
+        const { name, value, type, checked } = e.target;
+        const fieldValue = type === 'checkbox' ? checked : value;
+        const errorMessage = validateField(name, fieldValue);
+
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            [name]: errorMessage
+        }));
+    };
+
+    // Validate all fields
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {};
+
+        // Validate each field
+        Object.keys(formData).forEach(key => {
+            const value = formData[key];
+            const errorMessage = validateField(key, value);
+            newErrors[key] = errorMessage;
+
+            if (errorMessage) {
+                isValid = false;
+            }
+        });
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
+    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add your signup logic here
-        console.log('Signup attempt with:', formData);
+
+        if (validateForm()) {
+            // Form is valid, proceed with submission
+            console.log('Signup attempt with:', formData);
+            // Here you would typically call an API to register the user
+            alert('Form submitted successfully!');
+        } else {
+            console.log('Form has errors. Please correct them.');
+        }
     };
 
     return (
@@ -46,77 +182,105 @@ const Signup = () => {
                     <p className="text-sm text-green-100">Join our verification platform</p>
                 </div>
                 <div className="p-6">
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} noValidate>
                         <div className="mb-4">
                             <label className="block text-gray-700 mb-2 font-bold">Manufacturer Information</label>
-                            <input
-                                type="text"
-                                name="ManufacturerName"
-                                value={formData.manufacturerName}
-                                onChange={handleChange}
-                                placeholder="Manufacturer Name"
-                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none mb-3"
-                            />
-                            <input
-                                type="text"
-                                name="licenseNumber"
-                                value={formData.licenseNumber}
-                                onChange={handleChange}
-                                placeholder="License Number"
-                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
-                            />
+                            <div className="mb-3">
+                                <input
+                                    type="text"
+                                    name="manufacturerName"
+                                    value={formData.manufacturerName}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Manufacturer Name"
+                                    className={`w-full px-4 py-2 border rounded-md focus:outline-none ${errors.manufacturerName ? 'border-red-500 focus:ring-red-500' : 'focus:ring-2 focus:ring-green-500'}`}
+                                />
+                                {errors.manufacturerName && <p className="text-red-500 text-sm mt-1">{errors.manufacturerName}</p>}
+                            </div>
+                            <div>
+                                <input
+                                    type="text"
+                                    name="licenseNumber"
+                                    value={formData.licenseNumber}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="License Number"
+                                    className={`w-full px-4 py-2 border rounded-md focus:outline-none ${errors.licenseNumber ? 'border-red-500 focus:ring-red-500' : 'focus:ring-2 focus:ring-green-500'}`}
+                                />
+                                {errors.licenseNumber && <p className="text-red-500 text-sm mt-1">{errors.licenseNumber}</p>}
+                            </div>
                         </div>
 
                         <div className="mb-4">
                             <label className="block text-gray-700 mb-2 font-bold">Contact Information</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="Email Address"
-                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none mb-3"
-                            />
-                            <input
-                                type="tel"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                placeholder="Phone Number"
-                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
-                            />
+                            <div className="mb-3">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Email Address"
+                                    className={`w-full px-4 py-2 border rounded-md focus:outline-none ${errors.email ? 'border-red-500 focus:ring-red-500' : 'focus:ring-2 focus:ring-green-500'}`}
+                                />
+                                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                            </div>
+                            <div>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Phone Number"
+                                    className={`w-full px-4 py-2 border rounded-md focus:outline-none ${errors.phone ? 'border-red-500 focus:ring-red-500' : 'focus:ring-2 focus:ring-green-500'}`}
+                                />
+                                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                            </div>
                         </div>
 
                         <div className="mb-4">
                             <label className="block text-gray-700 mb-2 font-bold">Manufacturer Address</label>
-                            <input
-                                type="text"
-                                name="Address"
-                                value={formData.Address}
-                                onChange={handleChange}
-                                placeholder="Street Address"
-                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none mb-3"
-                            />
+                            <div>
+                                <input
+                                    type="text"
+                                    name="Address"
+                                    value={formData.Address}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Street Address"
+                                    className={`w-full px-4 py-2 border rounded-md focus:outline-none ${errors.Address ? 'border-red-500 focus:ring-red-500' : 'focus:ring-2 focus:ring-green-500'}`}
+                                />
+                                {errors.Address && <p className="text-red-500 text-sm mt-1">{errors.Address}</p>}
+                            </div>
                         </div>
 
                         <div className="mb-4">
                             <label className="block text-gray-700 mb-2 font-bold">Account Security</label>
-                            <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                placeholder="Password"
-                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none mb-3"
-                            />
-                            <input
-                                type="password"
-                                name="confirmPassword"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                placeholder="Confirm Password"
-                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
-                            />
+                            <div className="mb-3">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Password"
+                                    className={`w-full px-4 py-2 border rounded-md focus:outline-none ${errors.password ? 'border-red-500 focus:ring-red-500' : 'focus:ring-2 focus:ring-green-500'}`}
+                                />
+                                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                            </div>
+                            <div>
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Confirm Password"
+                                    className={`w-full px-4 py-2 border rounded-md focus:outline-none ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : 'focus:ring-2 focus:ring-green-500'}`}
+                                />
+                                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+                            </div>
                         </div>
 
                         <div className="mb-6">
@@ -127,13 +291,15 @@ const Signup = () => {
                                     name="termsAccepted"
                                     checked={formData.termsAccepted}
                                     onChange={handleChange}
-                                    className="h-4 w-4 mt-1 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                                    onBlur={handleBlur}
+                                    className={`h-4 w-4 mt-1 focus:ring-green-500 border-gray-300 rounded ${errors.termsAccepted ? 'border-red-500' : 'text-green-600'}`}
                                 />
                                 <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
                                     I agree to the <a href="#" className="text-green-600 hover:underline">Terms of Service</a> and{' '}
                                     <a href="#" className="text-green-600 hover:underline">Privacy Policy</a>
                                 </label>
                             </div>
+                            {errors.termsAccepted && <p className="text-red-500 text-sm mt-1">{errors.termsAccepted}</p>}
                         </div>
 
                         <button

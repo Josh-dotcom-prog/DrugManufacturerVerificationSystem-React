@@ -1,15 +1,44 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
+    const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        // Email validation
+        if (!email) {
+            newErrors.email = 'Enter your email address';
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            newErrors.email = 'Email address is invalid';
+        }
+
+        // Password validation
+        if (!password) {
+            newErrors.password = 'Enter your password';
+        } else if (password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add your login logic here
-        console.log('Login attempt with:', { email, password, rememberMe });
+
+        if (validateForm()) {
+            // In a real app, you'd call an API here to authenticate
+            console.log('Login attempt with:', { email, password, rememberMe });
+
+            // If authentication is successful, navigate to dashboard
+            navigate('/manufacturersdashboard');
+        }
     };
 
     return (
@@ -46,9 +75,10 @@ const Login = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="manufacturer@example.com"
-                                    className="w-full pl-10 px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
+                                    className={`w-full pl-10 px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none ${errors.email ? 'border-red-500' : ''}`}
                                 />
                             </div>
+                            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                         </div>
                         <div className="mb-6">
                             <div className="flex items-center justify-between mb-2">
@@ -69,9 +99,10 @@ const Login = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
-                                    className="w-full pl-10 px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none"
+                                    className={`w-full pl-10 px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:outline-none ${errors.password ? 'border-red-500' : ''}`}
                                 />
                             </div>
+                            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                         </div>
                         <div className="flex items-center mb-6">
                             <input
@@ -86,14 +117,12 @@ const Login = () => {
                             </label>
                         </div>
 
-                        <a href="/manufacturersdashboard">
-                            <button
-                                type="submit"
-                                className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                            >
-                                Log In
-                            </button>
-                        </a>
+                        <button
+                            type="submit"
+                            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                        >
+                            Log In
+                        </button>
 
                     </form>
                     <div className="mt-4 text-center text-gray-500 text-sm">
