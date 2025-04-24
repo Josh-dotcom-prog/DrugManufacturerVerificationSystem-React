@@ -53,10 +53,6 @@ const ResultSection = ({ scanResult }) => {
                                         <span className="font-medium w-32 text-gray-600">Expiry Date:</span>
                                         <span>Jan 25, 2026</span>
                                     </li>
-                                    <li className="flex">
-                                        <span className="font-medium w-32 text-gray-600">Verified On:</span>
-                                        <span>Feb 25, 2025</span>
-                                    </li>
                                 </ul>
                             </div>
                         </div>

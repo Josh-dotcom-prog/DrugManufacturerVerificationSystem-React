@@ -85,12 +85,16 @@ const Login = () => {
                                 Remember me
                             </label>
                         </div>
-                        <button
-                            type="submit"
-                            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                        >
-                            Log In
-                        </button>
+
+                        <a href="/manufacturersdashboard">
+                            <button
+                                type="submit"
+                                className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                            >
+                                Log In
+                            </button>
+                        </a>
+
                     </form>
                     <div className="mt-4 text-center text-gray-500 text-sm">
                         <p>

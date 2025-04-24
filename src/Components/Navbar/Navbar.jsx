@@ -9,9 +9,9 @@ const Navbar = () => {
                 <div className="flex items-center space-x-2">
                     <i className="fas fa-pills text-white text-2xl"></i>
                     <span className="text-xl font-bold">DMVS</span>
-                    <span className="hidden md:inline-block text-sm bg-green-600 px-2 py-1 rounded ml-2">
+                    {/* <span className="hidden md:inline-block text-sm bg-green-600 px-2 py-1 rounded ml-2">
                         Manufacturer Portal
-                    </span>
+                    </span> */}
                 </div>
                 <div>
                     <Link

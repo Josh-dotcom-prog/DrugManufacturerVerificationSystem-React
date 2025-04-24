@@ -130,9 +130,9 @@ const DrugVerificationSystem = () => {
                 {/* Hero Section */}
                 <section className="text-center py-8 mb-12">
                     <h3 className="text-4xl font-bold text-gray-800 mb-4">Drug Manufacturer Verification System</h3>
-                    <h3 className="text-2xl font-bold text-gray-800 mb-4">Verify Your Medication</h3>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        Ensure your medicines are authentic, safe, and from legitimate manufacturers.
+                    <h3 className="text-2xl font-bold text-gray-800 mb-4">SCAN.     VERIFY.    SECURE</h3>
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto italic">
+                        "Where Verification Meets Protection"
                     </p>
                 </section>
 

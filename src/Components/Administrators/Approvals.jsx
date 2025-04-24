@@ -106,7 +106,7 @@ const Approvals = () => {
                                                     <i class="fas fa-check mr-2"></i>
                                                     Approve
                                                 </button>
-                                                <button class="text-red-500 hover:text-green-700 border border-red-300 rounded px-2 py-1">
+                                                <button class="text-red-500 hover:text-red-700 border border-red-300 rounded px-2 py-1">
                                                     <i class="fas fa-close mr-2"></i>
                                                     Reject
                                                 </button>
@@ -128,7 +128,7 @@ const Approvals = () => {
                                                     <i class="fas fa-check mr-2"></i>
                                                     Approve
                                                 </button>
-                                                <button class="text-red-500 hover:text-green-700 border border-red-300 rounded px-2 py-1">
+                                                <button class="text-red-500 hover:text-red-700 border border-red-300 rounded px-2 py-1">
                                                     <i class="fas fa-close mr-2"></i>
                                                     Reject
                                                 </button>

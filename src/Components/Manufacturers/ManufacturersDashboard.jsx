@@ -10,22 +10,18 @@ const ManufacturersDashboard = () => {
                 </div>
 
                 <nav class="mt-6 px-3">
-                    <a href="#"
+                    <a href="/manufacturersdashboard"
                         class="flex items-center px-4 py-3 text-green-600 bg-green-50 rounded-md mb-1 border-l-4 border-green-600">
                         <i class="fas fa-chart-line w-5 h-5 mr-3"></i>
                         <span class="font-medium">Dashboard</span>
                     </a>
-                    <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-md mb-1">
+                    <a href="/drugs" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-md mb-1">
                         <i class="fas fa-capsules w-5 h-5 mr-3"></i>
-                        <span class="font-medium">Products</span>
+                        <span class="font-medium">Drugs</span>
                     </a>
-                    <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-md mb-1">
+                    <a href="/batches" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-md mb-1">
                         <i class="fas fa-barcode w-5 h-5 mr-3"></i>
                         <span class="font-medium">Batches</span>
-                    </a>
-                    <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-md mb-1">
-                        <i class="fas fa-cog w-5 h-5 mr-3"></i>
-                        <span class="font-medium">Settings</span>
                     </a>
                 </nav>
             </aside>
@@ -68,9 +64,9 @@ const ManufacturersDashboard = () => {
                 </div>
 
                 {/* <!-- Stats Cards --> */}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8 p-6">
                     <div class="bg-white p-6 rounded-lg shadow-md relative overflow-hidden">
-                        <h3 class="text-gray-500 text-sm font-medium mb-2">TOTAL PRODUCTS</h3>
+                        <h3 class="text-gray-500 text-sm font-medium mb-2">TOTAL DRUGS</h3>
                         <p class="text-3xl font-bold mb-1">37</p>
                         <p class="text-green-600 text-sm flex items-center">
                             <i class="fas fa-arrow-up mr-1"></i> 2 new this month
@@ -86,183 +82,145 @@ const ManufacturersDashboard = () => {
                         </p>
                         <i class="fas fa-boxes text-3xl text-green-100 absolute top-6 right-6"></i>
                     </div>
-
-                    <div class="bg-white p-6 rounded-lg shadow-md relative overflow-hidden">
-                        <h3 class="text-gray-500 text-sm font-medium mb-2">VERIFICATION SCANS</h3>
-                        <p class="text-3xl font-bold mb-1">1,842</p>
-                        <p class="text-green-600 text-sm flex items-center">
-                            <i class="fas fa-arrow-up mr-1"></i> 23% from last month
-                        </p>
-                        <i class="fas fa-qrcode text-3xl text-green-100 absolute top-6 right-6"></i>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-lg shadow-md relative overflow-hidden">
-                        <h3 class="text-gray-500 text-sm font-medium mb-2">ALERTS</h3>
-                        <p class="text-3xl font-bold mb-1">3</p>
-                        <p class="text-red-600 text-sm flex items-center">
-                            <i class="fas fa-arrow-down mr-1"></i> 2 resolved this month
-                        </p>
-                        <i class="fas fa-exclamation-triangle text-3xl text-yellow-500 absolute top-6 right-6"></i>
-                    </div>
                 </div>
 
-                {/* <!-- Products Table Section --> */}
-                <div id="productsSection" class="mb-8 bg-white rounded-lg shadow-sm overflow-hidden p-6">
-                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                        <h2 class="text-lg font-semibold">Registered Products</h2>
-                        <div class="flex bg-gray-100 px-3 py-2 rounded-md">
-                            <i class="fas fa-search text-gray-400 mr-2 mt-1"></i>
-                            <input type="text" placeholder="Search products..."
-                                class="bg-transparent border-none focus:outline-none text-sm" />
+                {/* <!-- Tables --> */}
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* <!-- Pending Approvals --> */}
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-medium">Recent Batches</h3>
+                            <p class="text-gray-500 text-sm">Created Batches in the System</p>
                         </div>
-                    </div>
-
-                    <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Drug Name</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        NDA Number</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Category</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Dosage Form</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Registration Date</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions</th>
-                                </tr>
-                            </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">Amoxicillin</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">A4-0142</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Antibiotic</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Capsule</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">12 Jan 2025</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex space-x-2">
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-qrcode"></i>
-                                            </button>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-200"></div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">BTC202524</div>
+                                            </div>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Active
+                                        </span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">Paracetamol</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">A4-1853</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Analgesic</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">23 Nov 2024</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex space-x-2">
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-qrcode"></i>
-                                            </button>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-200"></div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">BTC202524</div>
+                                            </div>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Active
+                                        </span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">Ciprofloxacin</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">A4-2241</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Antibiotic</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">07 Feb 2025</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Expired</span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex space-x-2">
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-qrcode"></i>
-                                            </button>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200"></div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">BTC202524</div>
+                                            </div>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Expired
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* <!-- Recent Drugs --> */}
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-medium">Recent Drugs</h3>
+                            <p class="text-gray-500 text-sm">Recently registered Drugs in the system</p>
+                        </div>
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <button id="profileButton"
+                                                class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold mr-3">
+                                                C
+                                            </button>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Ciprofloxacin</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Active
+                                        </span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">Metformin</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">A4-1922</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Antidiabetic</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">15 Dec 2024</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Expired</span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex space-x-2">
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-eye"></i>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <button id="profileButton"
+                                                class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold mr-3">
+                                                P
                                             </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-qrcode"></i>
-                                            </button>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Paracetamol</div>
+                                            </div>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Active
+                                        </span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">Diazepam</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">A4-3110</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Sedative</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">03 Sep 2024</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Expired</span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex space-x-2">
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-eye"></i>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <button id="profileButton"
+                                                class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold mr-3">
+                                                M
                                             </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="text-gray-500 hover:text-gray-700">
-                                                <i class="fas fa-redo"></i>
-                                            </button>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Metformin</div>
+                                            </div>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Active
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <button id="profileButton"
+                                                class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold mr-3">
+                                                A
+                                            </button>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Amoxicillin</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Active
+                                        </span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -274,4 +232,4 @@ const ManufacturersDashboard = () => {
     )
 }
 
-export default ManufacturersDashboard
+export default ManufacturersDashboard;
