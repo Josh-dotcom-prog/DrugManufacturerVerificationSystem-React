@@ -15,6 +15,8 @@ import Batches from "./Components/Manufacturers/Batches";
 import ManufacturersDashboard from "./Components/Manufacturers/ManufacturersDashboard";
 import ManufacturerTable from "./Components/Administrators/ManufacturerTable";
 import Approvals from "./Components/Administrators/Approvals";
+import DrugQRCode from "./Components/Manufacturers/DrugQRCode";
+
 
 const App = () => {
   return (
@@ -38,6 +40,7 @@ const App = () => {
           <Route path="/batches" element={<Batches />} />
           <Route path="/manufacturertable" element={<ManufacturerTable />} />
           <Route path="approvals" element={<Approvals />} />
+          <Route path="/qrcode" element={<DrugQRCode />} />
 
           {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/" replace />} />
