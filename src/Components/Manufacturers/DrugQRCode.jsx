@@ -14,8 +14,17 @@ const DrugQRCode = () => {
         );
     }
 
-    // Convert drug data to a string for the QR code
-    const qrData = JSON.stringify(drugData);
+    // Generate verification URL with encoded drug data
+    const generateVerificationUrl = () => {
+        // Encode drug data as URL parameter
+        const encodedData = encodeURIComponent(JSON.stringify(drugData));
+
+        // This should be your verification page URL
+        const baseUrl = window.location.origin;
+        return `${baseUrl}/verification?data=${encodedData}`;
+    };
+
+    const verificationUrl = generateVerificationUrl();
 
     // Download QR code as PNG
     const downloadQRCode = () => {
@@ -41,13 +50,13 @@ const DrugQRCode = () => {
                 document.body.removeChild(downloadLink);
             };
 
-            img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
         }
     };
 
     return (
         <div className="flex h-screen overflow-hidden bg-gray-50">
-            {/* Sidebar */}
+            {/* Sidebar - This would be your shared Layout component */}
             <aside className="w-64 bg-white border-r border-gray-200 hidden md:block">
                 <div className="p-6 flex items-center space-x-3 border-b border-gray-200">
                     <i className="fas fa-pills text-green-600 text-2xl"></i>
@@ -57,37 +66,13 @@ const DrugQRCode = () => {
 
             <main className="flex-1 overflow-y-auto p-6">
                 <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-sm p-6">
-                    <h1 className="text-2xl font-bold text-gray-800 mb-6">Drug Registration Successful</h1>
-
-                    {/* Drug Information Summary */}
-                    <div className="mb-6">
-                        <h2 className="text-lg font-semibold mb-4">Drug Details</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <p className="text-sm text-gray-600">Drug Name:</p>
-                                <p className="font-medium">{drugData.drugName}</p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600">Batch Number:</p>
-                                <p className="font-medium">{drugData.batchNumber}</p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600">Manufacturer:</p>
-                                <p className="font-medium">{drugData.manufacturer}</p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-600">Expiry Date:</p>
-                                <p className="font-medium">{drugData.expiryDate}</p>
-                            </div>
-                        </div>
-                    </div>
+                    <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Drug Registration Successful</h1>
 
                     {/* QR Code Section */}
                     <div className="flex flex-col items-center mb-6">
-                        <h2 className="text-lg font-semibold mb-4">Scan QR Code for Verification</h2>
                         <div id="qr-code" className="border-2 border-dashed border-gray-300 p-4 rounded-lg mb-4">
                             <QRCodeSVG
-                                value={qrData}
+                                value={verificationUrl}
                                 size={200}
                                 level="H"
                                 includeMargin={true}
@@ -95,12 +80,31 @@ const DrugQRCode = () => {
                                 bgColor="#ffffff"
                             />
                         </div>
-                        <button
-                            onClick={downloadQRCode}
-                            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors"
-                        >
-                            <i className="fas fa-download mr-2"></i> Download QR Code
-                        </button>
+                        <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+                            <button
+                                onClick={downloadQRCode}
+                                className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors"
+                            >
+                                <i className="fas fa-download mr-2"></i> Download QR Code
+                            </button>
+                            <a
+                                href={verificationUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors text-center"
+                            >
+                                <i className="fas fa-external-link-alt mr-2"></i> Test Verification
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Instructions */}
+                    <div className="bg-green-50 p-4 rounded-md mb-6">
+                        <h3 className="font-semibold text-green-800 mb-2">How to use this QR code:</h3>
+                        <ol className="list-decimal list-inside text-green-700 space-y-1">
+                            <li>Download and print this QR code</li>
+                            <li>Attach it to the drug packaging or include it in the drug documentation</li>
+                        </ol>
                     </div>
 
                     {/* Back Button */}

@@ -1,115 +1,178 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-const ResultSection = ({ scanResult }) => {
-    // Mock verification function - in a real app, this would check against a database
-    const verifyDrug = (code) => {
-        // For demo purposes: if code contains "FAKE" or "INVALID" it's not authentic
-        return !code.includes("FAKE") && !code.includes("INVALID");
-    };
+const ResultSection = ({ drugData, isLoading }) => {
+    const [isAuthentic, setIsAuthentic] = useState(false);
 
-    const isAuthentic = verifyDrug(scanResult);
+    useEffect(() => {
+        // Simulate verification process
+        if (drugData) {
+            // In a real application, you would verify the drug data against your database
+            // For now, we'll assume all drugs with data are authentic
+            setIsAuthentic(true);
+        }
+    }, [drugData]);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center p-8">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Verifying medication...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!drugData) {
+        return (
+            <div className="bg-white p-8 rounded-lg shadow-md">
+                <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mb-4">
+                        <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                    <h2 className="text-xl font-bold text-gray-800 mb-2">Verification Failed</h2>
+                    <p className="text-gray-600">Unable to verify this medication. The QR code may be invalid or corrupted.</p>
+                    <button
+                        onClick={() => window.location.href = '/verification'}
+                        className="mt-6 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <section className="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mb-12">
-            {isAuthentic ? (
-                // Authentic Drug Card
-                <>
-                    <div className="bg-green-600 text-white py-3 px-4 flex items-center">
-                        <div className="mr-2">✓</div>
-                        <h2 className="text-xl font-semibold">Verification Successful</h2>
-                    </div>
-                    <div className="p-6">
-                        <div className="bg-green-50 p-4 rounded-md mb-6 border border-green-200">
-                            <p className="text-green-800">This medication has been verified as authentic.</p>
-                            <p className="text-gray-600 mt-2">QR Code: {scanResult}</p>
-                        </div>
+        <div>
+            {/* Verification Status Banner */}
+            <div className={`mb-4 p-4 rounded-md flex items-center ${isAuthentic ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    {isAuthentic ? (
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    ) : (
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                    )}
+                </svg>
+                <span className="font-medium">{isAuthentic ? 'Verification Successful' : 'Verification Failed'}</span>
+            </div>
 
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <h3 className="font-semibold text-lg mb-3">Product Information</h3>
-                                <ul className="space-y-2">
-                                    <li className="flex">
-                                        <span className="font-medium w-32 text-gray-600">Name:</span>
-                                        <span>Amoxicillin 500mg</span>
-                                    </li>
-                                    <li className="flex">
-                                        <span className="font-medium w-32 text-gray-600">Manufacturer:</span>
-                                        <span>PharmaCo Ltd.</span>
-                                    </li>
-                                    <li className="flex">
-                                        <span className="font-medium w-32 text-gray-600">Batch Number:</span>
-                                        <span>BT20240125</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-lg mb-3">Dates</h3>
-                                <ul className="space-y-2">
-                                    <li className="flex">
-                                        <span className="font-medium w-32 text-gray-600">Manufactured:</span>
-                                        <span>Jan 25, 2024</span>
-                                    </li>
-                                    <li className="flex">
-                                        <span className="font-medium w-32 text-gray-600">Expiry Date:</span>
-                                        <span>Jan 25, 2026</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            ) : (
-                // Non-Authentic Drug Card
-                <>
-                    <div className="bg-red-600 text-white py-3 px-4 flex items-center">
-                        <div className="mr-2">⚠️</div>
-                        <h2 className="text-xl font-semibold">Verification Failed</h2>
-                    </div>
-                    <div className="p-6">
-                        <div className="bg-red-50 p-4 rounded-md mb-6 border border-red-200">
-                            <p className="text-red-800 font-bold">Warning: This medication could not be verified as authentic.</p>
-                            <p className="text-gray-700 mt-2">QR Code: {scanResult}</p>
-                        </div>
+            {/* Authentication Message */}
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-md">
+                <p className="text-green-800">
+                    {isAuthentic
+                        ? 'This medication has been verified as authentic.'
+                        : 'This medication could not be verified. Please contact the manufacturer.'}
+                </p>
+            </div>
 
-                        <div className="mb-6">
-                            <h3 className="font-semibold text-lg mb-3 text-red-800">Potential Issues</h3>
-                            <ul className="space-y-2 text-gray-700">
-                                <li className="flex items-start">
-                                    <span className="text-red-600 mr-2">•</span>
-                                    <span>The QR code may be invalid or tampered with</span>
-                                </li>
-                                <li className="flex items-start">
-                                    <span className="text-red-600 mr-2">•</span>
-                                    <span>This product may be counterfeit or falsified</span>
-                                </li>
-                            </ul>
-                        </div>
+            {/* Drug Information Card */}
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+                <div className="p-5 border-b border-gray-200">
+                    <h2 className="text-lg font-semibold text-gray-800">Product Information</h2>
+                </div>
 
-                        <div className="bg-red-50 p-4 rounded-md border border-yellow-200">
-                            <h3 className="font-semibold text-lg mb-2 text-yellow-800">Recommended Actions</h3>
-                            <ul className="space-y-2 text-gray-700">
-                                <li className="flex items-start">
-                                    <span className="text-yellow-600 mr-2">→</span>
-                                    <span>Do not use this medication</span>
-                                </li>
-                                <li className="flex items-start">
-                                    <span className="text-red-600 mr-2">→</span>
-                                    <span>Return it to your pharmacy or healthcare provider</span>
-                                </li>
-                                <li className="flex items-start">
-                                    <span className="text-red-600 mr-2">→</span>
-                                    <span>Report this incident to the local health authority</span>
-                                </li>
-                                <li className="flex items-start">
-                                    <span className="text-red-600 mr-2">→</span>
-                                    <span>Call our hotline for assistance: <a href="tel:+1800MEDVERIFY" className="text-blue-600 underline">1-800-MED-VERIFY</a></span>
-                                </li>
-                            </ul>
-                        </div>
+                <div className="grid grid-cols-2 gap-4 p-5">
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500 mb-1">Name:</h3>
+                        <p className="font-medium text-gray-800">{drugData.drugName}</p>
                     </div>
-                </>
+
+                    {drugData.category && (
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-500 mb-1">Category:</h3>
+                            <p className="font-medium text-gray-800">{drugData.category}</p>
+                        </div>
+                    )}
+
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500 mb-1">Manufacturer:</h3>
+                        <p className="font-medium text-gray-800">{drugData.manufacturer}</p>
+                    </div>
+
+                    {drugData.dosageForm && (
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-500 mb-1">Dosage Form:</h3>
+                            <p className="font-medium text-gray-800">{drugData.dosageForm}</p>
+                        </div>
+                    )}
+
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500 mb-1">Batch Number:</h3>
+                        <p className="font-medium text-gray-800">{drugData.batchNumber}</p>
+                    </div>
+
+                    {drugData.countryOfOrigin && (
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-500 mb-1">Country of Origin:</h3>
+                            <p className="font-medium text-gray-800">{drugData.countryOfOrigin}</p>
+                        </div>
+                    )}
+
+                    {drugData.serialNumber && (
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-500 mb-1">Serial Number:</h3>
+                            <p className="font-medium text-gray-800">{drugData.serialNumber}</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Dates Card */}
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+                <div className="p-5 border-b border-gray-200">
+                    <h2 className="text-lg font-semibold text-gray-800">Dates</h2>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 p-5">
+                    {drugData.manufactureDate && (
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-500 mb-1">Manufactured:</h3>
+                            <p className="font-medium text-gray-800">
+                                {new Date(drugData.manufactureDate).toLocaleDateString()}
+                            </p>
+                        </div>
+                    )}
+
+                    {drugData.expiryDate && (
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-500 mb-1">Expiry Date:</h3>
+                            <p className="font-medium text-gray-800">
+                                {new Date(drugData.expiryDate).toLocaleDateString()}
+                            </p>
+                        </div>
+                    )}
+
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500 mb-1">Verified On:</h3>
+                        <p className="font-medium text-gray-800">{new Date().toLocaleDateString()}</p>
+                    </div>
+
+                    {drugData.registrationDate && (
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-500 mb-1">Registration Date:</h3>
+                            <p className="font-medium text-gray-800">
+                                {new Date(drugData.registrationDate).toLocaleDateString()}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Description if available */}
+            {drugData.description && (
+                <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+                    <div className="p-5 border-b border-gray-200">
+                        <h2 className="text-lg font-semibold text-gray-800">Description</h2>
+                    </div>
+                    <div className="p-5">
+                        <p className="text-gray-700">{drugData.description}</p>
+                    </div>
+                </div>
             )}
-        </section>
+        </div>
     );
 };
 

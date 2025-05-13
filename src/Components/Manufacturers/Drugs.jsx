@@ -279,7 +279,7 @@ const Drugs = () => {
                 {showRegistrationForm && (
                     <div id="registerForm" className="mb-8 bg-white rounded-lg shadow-sm overflow-hidden">
                         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                            <h2 className="text-3xl font-semibold">Register New Drug</h2>
+                            <h2 className="text-3xl text-center font-semibold">Register New Drug</h2>
                             <button
                                 onClick={toggleRegistrationForm}
                                 className="text-gray-500 hover:text-gray-700">

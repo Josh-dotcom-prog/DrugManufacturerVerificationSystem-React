@@ -16,7 +16,7 @@ import ManufacturersDashboard from "./Components/Manufacturers/ManufacturersDash
 import ManufacturerTable from "./Components/Administrators/ManufacturerTable";
 import Approvals from "./Components/Administrators/Approvals";
 import DrugQRCode from "./Components/Manufacturers/DrugQRCode";
-
+import DrugVerification from "./Components/Drug Verification/DrugVerification";
 
 const App = () => {
   return (
@@ -41,6 +41,7 @@ const App = () => {
           <Route path="/manufacturertable" element={<ManufacturerTable />} />
           <Route path="approvals" element={<Approvals />} />
           <Route path="/qrcode" element={<DrugQRCode />} />
+          <Route path="/verification" element={<DrugVerification />} />
 
           {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/" replace />} />
