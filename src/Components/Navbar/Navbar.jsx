@@ -16,7 +16,7 @@ const Navbar = () => {
                 <div>
                     <Link
                         to="/login"
-                        className="bg-white text-green-800 px-4 py-2 rounded-md font-medium hover:bg-green-100"
+                        className="bg-white text-green-800 px-4 py-2 rounded-md font-medium hover:bg-green-100 sm:hidden"
                     >
                         Are You a Manufacturer?
                     </Link>
