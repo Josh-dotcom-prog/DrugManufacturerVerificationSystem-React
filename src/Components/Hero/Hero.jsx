@@ -6,13 +6,22 @@ const DrugVerificationSystem = () => {
     const [showScanner, setShowScanner] = useState(false);
     const [scanResult, setResult] = useState(null);
     const [scanning, setScanning] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const streamRef = useRef(null);
+    const scannerRef = useRef(null);
+    const fileInputRef = useRef(null);
 
     // Start camera and QR scanning
     const handleScan = async () => {
+        // If on mobile, try to use the native scanner
+        if (isMobile) {
+            useNativeScanner();
+            return;
+        }
+
         try {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 setShowScanner(true);
@@ -43,6 +52,12 @@ const DrugVerificationSystem = () => {
     const closeScanner = () => {
         setShowScanner(false);
         setScanning(false);
+
+        // Stop animation frame
+        if (scannerRef.current) {
+            cancelAnimationFrame(scannerRef.current);
+            scannerRef.current = null;
+        }
 
         // Stop all video tracks
         if (streamRef.current) {
@@ -86,7 +101,7 @@ const DrugVerificationSystem = () => {
         }
 
         // Continue scanning if no QR code found
-        requestAnimationFrame(scanQRCode);
+        scannerRef.current = requestAnimationFrame(scanQRCode);
     };
 
     // Handle successful QR scan
@@ -95,18 +110,26 @@ const DrugVerificationSystem = () => {
         closeScanner();
     };
 
-    // Start scanning when video is ready
+    // Start scanning when video becomes visible and ready
     useEffect(() => {
         if (scanning && videoRef.current) {
-            const handleVideoPlay = () => {
-                requestAnimationFrame(scanQRCode);
+            const startScanning = () => {
+                scannerRef.current = requestAnimationFrame(scanQRCode);
             };
 
-            videoRef.current.addEventListener('play', handleVideoPlay);
+            // Start scanning when video is ready
+            if (videoRef.current.readyState >= 2) {
+                startScanning();
+            } else {
+                videoRef.current.addEventListener('loadeddata', startScanning);
+            }
 
             return () => {
                 if (videoRef.current) {
-                    videoRef.current.removeEventListener('play', handleVideoPlay);
+                    videoRef.current.removeEventListener('loadeddata', startScanning);
+                }
+                if (scannerRef.current) {
+                    cancelAnimationFrame(scannerRef.current);
                 }
             };
         }
@@ -115,6 +138,9 @@ const DrugVerificationSystem = () => {
     // Clean up on component unmount
     useEffect(() => {
         return () => {
+            if (scannerRef.current) {
+                cancelAnimationFrame(scannerRef.current);
+            }
             if (streamRef.current) {
                 streamRef.current.getTracks().forEach(track => {
                     track.stop();
@@ -122,6 +148,72 @@ const DrugVerificationSystem = () => {
             }
         };
     }, []);
+
+    // Placeholder for the results section component
+    const ResultsSection = ({ scanResult }) => {
+        // Mock data for demonstration - in a real app, you would fetch this from a database
+        const drugData = {
+            name: "Amoxicillin",
+            strength: "500mg",
+            manufacturer: "PharmaCo",
+            batchNumber: "BT20240125",
+            expiryDate: "2026-01-25",
+            verified: true
+        };
+
+        return (
+            <section className="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mb-12">
+                <div className="bg-green-700 text-white py-3 px-4">
+                    <h2 className="text-xl font-semibold">Verification Results</h2>
+                </div>
+                <div className="p-6">
+                    {drugData.verified ? (
+                        <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-md flex items-center">
+                            <span className="text-green-600 text-2xl mr-2">✓</span>
+                            <span>Authentic Product Verified</span>
+                        </div>
+                    ) : (
+                        <div className="mb-4 p-3 bg-red-100 text-red-800 rounded-md flex items-center">
+                            <span className="text-red-600 text-2xl mr-2">✗</span>
+                            <span>Warning: Verification Failed</span>
+                        </div>
+                    )}
+
+                    <div className="border rounded-md overflow-hidden">
+                        <table className="w-full">
+                            <tbody>
+                                <tr className="border-b">
+                                    <td className="py-2 px-4 bg-gray-50 font-medium">Product Name</td>
+                                    <td className="py-2 px-4">{drugData.name}</td>
+                                </tr>
+                                <tr className="border-b">
+                                    <td className="py-2 px-4 bg-gray-50 font-medium">Strength</td>
+                                    <td className="py-2 px-4">{drugData.strength}</td>
+                                </tr>
+                                <tr className="border-b">
+                                    <td className="py-2 px-4 bg-gray-50 font-medium">Manufacturer</td>
+                                    <td className="py-2 px-4">{drugData.manufacturer}</td>
+                                </tr>
+                                <tr className="border-b">
+                                    <td className="py-2 px-4 bg-gray-50 font-medium">Batch Number</td>
+                                    <td className="py-2 px-4">{drugData.batchNumber}</td>
+                                </tr>
+                                <tr>
+                                    <td className="py-2 px-4 bg-gray-50 font-medium">Expiry Date</td>
+                                    <td className="py-2 px-4">{drugData.expiryDate}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="mt-4 text-sm text-gray-600">
+                        <p>Scanned Code: {scanResult}</p>
+                        <p className="mt-2">Verified on: {new Date().toLocaleString()}</p>
+                    </div>
+                </div>
+            </section>
+        );
+    };
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -163,8 +255,6 @@ const DrugVerificationSystem = () => {
 
                 {/* Results Section (Conditionally Rendered) */}
                 {scanResult && <ResultsSection scanResult={scanResult} />}
-
-
 
                 {/* How It Works */}
                 <section className="mb-12">
@@ -221,11 +311,12 @@ const DrugVerificationSystem = () => {
                             >
                                 Close Scanner
                             </button>
+                            {/* For testing - in production you'd rely on the actual QR scanning */}
                             <button
                                 className="flex-1 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                                 onClick={() => handleQrResult('AMOX500-BT20240125-PHARMACO')}
                             >
-                                Scan
+                                Demo Scan
                             </button>
                         </div>
                     </div>
