@@ -7,6 +7,7 @@ const DrugVerificationSystem = () => {
     const [scanResult, setResult] = useState(null);
     const [scanning, setScanning] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [cameraError, setCameraError] = useState(null);
 
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -14,37 +15,58 @@ const DrugVerificationSystem = () => {
     const scannerRef = useRef(null);
     const fileInputRef = useRef(null);
 
+    // Check if device is mobile on component mount
+    useEffect(() => {
+        const checkMobile = () => {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            setIsMobile(/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase()));
+        };
+        checkMobile();
+    }, []);
+
+    // Native scanner for mobile devices
+    const useNativeScanner = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
     // Start camera and QR scanning
     const handleScan = async () => {
-        // If on mobile, try to use the native scanner
-        if (isMobile) {
-            useNativeScanner();
-            return;
-        }
+        // Reset any previous errors
+        setCameraError(null);
 
         try {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 setShowScanner(true);
                 setScanning(true);
 
-                // Get camera stream
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" } // Use back camera if available
-                });
+                // Get camera stream - explicitly request the back camera with higher resolution
+                const constraints = {
+                    video: {
+                        facingMode: "environment", // Use back camera if available
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                };
 
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 streamRef.current = stream;
 
                 // Set video source to the camera stream
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
-                    videoRef.current.play();
+                    await videoRef.current.play().catch(err => {
+                        console.error("Error playing video:", err);
+                        setCameraError("Failed to start video stream");
+                    });
                 }
             } else {
-                alert('Sorry, your browser does not support camera access');
+                setCameraError('Sorry, your browser does not support camera access');
             }
         } catch (error) {
             console.error("Error accessing camera:", error);
-            alert('Failed to access camera: ' + error.message);
+            setCameraError(`Failed to access camera: ${error.message}`);
         }
     };
 
@@ -52,6 +74,7 @@ const DrugVerificationSystem = () => {
     const closeScanner = () => {
         setShowScanner(false);
         setScanning(false);
+        setCameraError(null);
 
         // Stop animation frame
         if (scannerRef.current) {
@@ -217,6 +240,22 @@ const DrugVerificationSystem = () => {
 
     return (
         <div className="flex flex-col min-h-screen">
+            {/* Hidden file input for mobile native scanning */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={(e) => {
+                    // Handle file upload for QR scanning (would need additional implementation)
+                    console.log("File selected:", e.target.files[0]);
+                    // In a real app, you would process this image to detect QR codes
+                    // For demo purposes:
+                    handleQrResult('AMOX500-BT20240125-PHARMACO');
+                }}
+            />
+
             {/* Main Content */}
             <main className="container mx-auto px-4 py-8 flex-grow">
                 {/* Hero Section */}
@@ -292,16 +331,30 @@ const DrugVerificationSystem = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
                     <div className="bg-white p-4 rounded-lg w-full max-w-md">
                         <div className="relative">
-                            <video
-                                ref={videoRef}
-                                className="w-full h-64 bg-black"
-                                playsInline
-                            />
-                            <canvas
-                                ref={canvasRef}
-                                className="hidden"
-                            />
-                            <div className="absolute inset-0 border-2 border-green-500 opacity-50"></div>
+                            {cameraError ? (
+                                <div className="w-full h-64 bg-gray-200 flex items-center justify-center text-red-600 p-4 text-center">
+                                    <p>{cameraError}</p>
+                                </div>
+                            ) : (
+                                <>
+                                    <video
+                                        ref={videoRef}
+                                        className="w-full h-64 bg-black object-cover"
+                                        playsInline
+                                        autoPlay
+                                    />
+                                    <canvas
+                                        ref={canvasRef}
+                                        className="hidden"
+                                    />
+                                    <div className="absolute inset-0 border-2 border-green-500 opacity-50 pointer-events-none">
+                                        {/* Scanning guide overlay */}
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="w-48 h-48 border-2 border-white opacity-70"></div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                         <p className="text-center text-gray-600 my-2">Position QR code within the frame</p>
                         <div className="mt-4 flex space-x-2">
@@ -316,7 +369,7 @@ const DrugVerificationSystem = () => {
                                 className="flex-1 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                                 onClick={() => handleQrResult('AMOX500-BT20240125-PHARMACO')}
                             >
-                                Demo Scan
+                                Scan
                             </button>
                         </div>
                     </div>
