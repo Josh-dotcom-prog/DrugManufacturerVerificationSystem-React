@@ -19,10 +19,6 @@ const ManufacturersDashboard = () => {
                         <i className="fas fa-capsules w-5 h-5 mr-3"></i>
                         <span className="font-medium">Drugs</span>
                     </a>
-                    <a href="/batches" className="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-md mb-1">
-                        <i className="fas fa-barcode w-5 h-5 mr-3"></i>
-                        <span className="font-medium">Batches</span>
-                    </a>
                 </nav>
             </aside>
 
@@ -64,23 +60,32 @@ const ManufacturersDashboard = () => {
                 </div>
 
                 {/* <!-- Stats Cards --> */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8 p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8 p-6">
                     <div className="bg-white p-6 rounded-lg shadow-md relative overflow-hidden">
-                        <h3 className="text-gray-500 text-sm font-medium mb-2">TOTAL DRUGS</h3>
+                        <h3 className="text-yellow-500 text-sm font-medium mb-2">TOTAL DRUGS</h3>
                         <p className="text-3xl font-bold mb-1">37</p>
-                        <p className="text-green-600 text-sm flex items-center">
+                        <p className="text-yellow-600 text-sm flex items-center">
                             <i className="fas fa-arrow-up mr-1"></i> 2 new this month
                         </p>
-                        <i className="fas fa-capsules text-3xl text-green-100 absolute top-6 right-6"></i>
+                        <i className="fas fa-capsules text-3xl text-yellow-100 absolute top-6 right-6"></i>
                     </div>
 
                     <div className="bg-white p-6 rounded-lg shadow-md relative overflow-hidden">
-                        <h3 className="text-gray-500 text-sm font-medium mb-2">ACTIVE BATCHES</h3>
+                        <h3 className="text-green-500 text-sm font-medium mb-2">ACTIVE DRUGS</h3>
                         <p className="text-3xl font-bold mb-1">218</p>
                         <p className="text-green-600 text-sm flex items-center">
                             <i className="fas fa-arrow-up mr-1"></i> 15 new this month
                         </p>
                         <i className="fas fa-boxes text-3xl text-green-100 absolute top-6 right-6"></i>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-lg shadow-md relative overflow-hidden">
+                        <h3 className="text-red-500 text-sm font-medium mb-2">EXPIRED DRUGS</h3>
+                        <p className="text-3xl font-bold mb-1">34</p>
+                        <p className="text-green-600 text-sm flex items-center">
+                            <i className="fas fa-arrow-up mr-1"></i> 10 new this month
+                        </p>
+                        <i className="fas fa-capsules text-3xl text-red-100 absolute top-6 right-6"></i>
                     </div>
                 </div>
 
@@ -89,8 +94,8 @@ const ManufacturersDashboard = () => {
                     {/* <!-- Pending Approvals --> */}
                     <div className="bg-white rounded-lg shadow overflow-hidden">
                         <div className="p-6 border-b border-gray-200">
-                            <h3 className="text-lg font-medium">Recent Batches</h3>
-                            <p className="text-gray-500 text-sm">Created Batches in the System</p>
+                            <h3 className="text-lg font-medium">Expired Drugs</h3>
+                            <p className="text-gray-500 text-sm">Expired Drugs in the System</p>
                         </div>
                         <table className="min-w-full divide-y divide-gray-200">
                             <tbody className="bg-white divide-y divide-gray-200">

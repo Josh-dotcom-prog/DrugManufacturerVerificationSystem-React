@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera } from 'lucide-react';
-import jsQR from 'jsqr'; // You'll need to install this package
+import { Camera, Loader2 } from 'lucide-react';
+import jsQR from 'jsqr';
 
 const DrugVerificationSystem = () => {
     const [showScanner, setShowScanner] = useState(false);
@@ -8,6 +8,7 @@ const DrugVerificationSystem = () => {
     const [scanning, setScanning] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [cameraError, setCameraError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -24,6 +25,13 @@ const DrugVerificationSystem = () => {
         checkMobile();
     }, []);
 
+    // Validate QR code format (adjust this to match your actual QR code format)
+    const isValidDrugQRCode = (qrData) => {
+        // Example pattern: DRUGNAME-STRENGTH-BATCH-MANUFACTURER
+        const drugQrPattern = /^[A-Z0-9]+-[A-Z0-9]+-[A-Z0-9]+-[A-Z0-9]+$/;
+        return drugQrPattern.test(qrData);
+    };
+
     // Native scanner for mobile devices
     const useNativeScanner = () => {
         if (fileInputRef.current) {
@@ -33,18 +41,17 @@ const DrugVerificationSystem = () => {
 
     // Start camera and QR scanning
     const handleScan = async () => {
-        // Reset any previous errors
         setCameraError(null);
+        setIsLoading(false);
 
         try {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 setShowScanner(true);
                 setScanning(true);
 
-                // Get camera stream - explicitly request the back camera with higher resolution
                 const constraints = {
                     video: {
-                        facingMode: "environment", // Use back camera if available
+                        facingMode: "environment",
                         width: { ideal: 1280 },
                         height: { ideal: 720 }
                     }
@@ -53,7 +60,6 @@ const DrugVerificationSystem = () => {
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 streamRef.current = stream;
 
-                // Set video source to the camera stream
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
                     await videoRef.current.play().catch(err => {
@@ -75,14 +81,13 @@ const DrugVerificationSystem = () => {
         setShowScanner(false);
         setScanning(false);
         setCameraError(null);
+        setIsLoading(false);
 
-        // Stop animation frame
         if (scannerRef.current) {
             cancelAnimationFrame(scannerRef.current);
             scannerRef.current = null;
         }
 
-        // Stop all video tracks
         if (streamRef.current) {
             streamRef.current.getTracks().forEach(track => {
                 track.stop();
@@ -98,39 +103,42 @@ const DrugVerificationSystem = () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
 
-        // Make sure video is playing
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            // Set canvas dimensions to match video
             canvas.height = video.videoHeight;
             canvas.width = video.videoWidth;
-
-            // Draw current video frame to canvas
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Get image data for QR processing
             const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-            // Process with jsQR
             const code = jsQR(imageData.data, imageData.width, imageData.height, {
                 inversionAttempts: "dontInvert",
             });
 
             if (code) {
-                // QR code found
-                console.log("QR code detected:", code.data);
                 handleQrResult(code.data);
                 return;
             }
         }
 
-        // Continue scanning if no QR code found
         scannerRef.current = requestAnimationFrame(scanQRCode);
     };
 
     // Handle successful QR scan
-    const handleQrResult = (result) => {
-        setResult(result);
-        closeScanner();
+    const handleQrResult = async (result) => {
+        if (isValidDrugQRCode(result)) {
+            setIsLoading(true);
+            try {
+                // Simulate API verification
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                setResult(result);
+                closeScanner();
+            } catch (error) {
+                setCameraError('Verification failed. Please try again.');
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            setCameraError('This is not a valid drug verification QR code');
+            scannerRef.current = requestAnimationFrame(scanQRCode);
+        }
     };
 
     // Start scanning when video becomes visible and ready
@@ -140,7 +148,6 @@ const DrugVerificationSystem = () => {
                 scannerRef.current = requestAnimationFrame(scanQRCode);
             };
 
-            // Start scanning when video is ready
             if (videoRef.current.readyState >= 2) {
                 startScanning();
             } else {
@@ -172,15 +179,17 @@ const DrugVerificationSystem = () => {
         };
     }, []);
 
-    // Placeholder for the results section component
+    // Results Section Component
     const ResultsSection = ({ scanResult }) => {
-        // Mock data for demonstration - in a real app, you would fetch this from a database
+        // Parse the QR code data (adjust based on your actual format)
+        const [drugName, strength, batchNumber, manufacturer] = scanResult.split('-');
+
         const drugData = {
-            name: "Amoxicillin",
-            strength: "500mg",
-            manufacturer: "PharmaCo",
-            batchNumber: "BT20240125",
-            expiryDate: "2026-01-25",
+            name: drugName || "Unknown",
+            manufacturer: manufacturer || "Unknown",
+            batchNumber: batchNumber || "Unknown",
+            expiryDate: "2026-01-25", // This would come from your database
+            manufacturerDate: "2025-01-31",
             verified: true
         };
 
@@ -248,11 +257,9 @@ const DrugVerificationSystem = () => {
                 capture="environment"
                 className="hidden"
                 onChange={(e) => {
-                    // Handle file upload for QR scanning (would need additional implementation)
-                    console.log("File selected:", e.target.files[0]);
-                    // In a real app, you would process this image to detect QR codes
-                    // For demo purposes:
-                    handleQrResult('AMOX500-BT20240125-PHARMACO');
+                    // In a real app, you would process the image to detect QR codes
+                    // For demo, we'll simulate a valid drug QR code
+                    handleQrResult('AMOX-500MG-BT20240125-PHARMACO');
                 }}
             />
 
@@ -261,7 +268,7 @@ const DrugVerificationSystem = () => {
                 {/* Hero Section */}
                 <section className="text-center py-8 mb-12">
                     <h3 className="text-4xl font-bold text-gray-800 mb-4">Drug Manufacturer Verification System</h3>
-                    <h3 className="text-2xl font-bold text-gray-800 mb-4">SCAN.     VERIFY.    SECURE</h3>
+                    <h3 className="text-2xl font-bold text-gray-800 mb-4">SCAN. VERIFY. SECURE</h3>
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto italic">
                         "Where Verification Meets Protection"
                     </p>
@@ -283,7 +290,7 @@ const DrugVerificationSystem = () => {
                                 </div>
                                 <button
                                     className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 flex items-center"
-                                    onClick={handleScan}
+                                    onClick={isMobile ? useNativeScanner : handleScan}
                                 >
                                     <Camera className="inline mr-2" size={16} /> Scan QR Code
                                 </button>
@@ -299,7 +306,6 @@ const DrugVerificationSystem = () => {
                 <section className="mb-12">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">How It Works</h2>
                     <div className="grid md:grid-cols-3 gap-8">
-                        {/* Scan QR Code card */}
                         <div className="bg-white p-6 rounded-lg shadow-md text-center">
                             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <Camera className="text-green-600" size={24} />
@@ -307,7 +313,6 @@ const DrugVerificationSystem = () => {
                             <h3 className="font-semibold text-lg mb-2">Scan QR Code</h3>
                             <p className="text-gray-600">Locate the QR code on your medication packaging.</p>
                         </div>
-                        {/* Verification card */}
                         <div className="bg-white p-6 rounded-lg shadow-md text-center">
                             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <span className="text-green-600 text-2xl">🔍</span>
@@ -330,48 +335,49 @@ const DrugVerificationSystem = () => {
             {showScanner && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
                     <div className="bg-white p-4 rounded-lg w-full max-w-md">
-                        <div className="relative">
-                            {cameraError ? (
-                                <div className="w-full h-64 bg-gray-200 flex items-center justify-center text-red-600 p-4 text-center">
-                                    <p>{cameraError}</p>
-                                </div>
-                            ) : (
-                                <>
-                                    <video
-                                        ref={videoRef}
-                                        className="w-full h-64 bg-black object-cover"
-                                        playsInline
-                                        autoPlay
-                                    />
-                                    <canvas
-                                        ref={canvasRef}
-                                        className="hidden"
-                                    />
-                                    <div className="absolute inset-0 border-2 border-green-500 opacity-50 pointer-events-none">
-                                        {/* Scanning guide overlay */}
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="w-48 h-48 border-2 border-white opacity-70"></div>
+                        {isLoading ? (
+                            <div className="w-full h-64 flex flex-col items-center justify-center">
+                                <Loader2 className="animate-spin h-12 w-12 text-green-600 mb-4" />
+                                <p className="text-gray-600">Verifying QR code...</p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="relative">
+                                    {cameraError ? (
+                                        <div className="w-full h-64 bg-gray-200 flex items-center justify-center text-red-600 p-4 text-center">
+                                            <p>{cameraError}</p>
                                         </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                        <p className="text-center text-gray-600 my-2">Position QR code within the frame</p>
-                        <div className="mt-4 flex space-x-2">
-                            <button
-                                className="flex-1 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                onClick={closeScanner}
-                            >
-                                Close Scanner
-                            </button>
-                            {/* For testing - in production you'd rely on the actual QR scanning */}
-                            <button
-                                className="flex-1 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                                onClick={() => handleQrResult('AMOX500-BT20240125-PHARMACO')}
-                            >
-                                Scan
-                            </button>
-                        </div>
+                                    ) : (
+                                        <>
+                                            <video
+                                                ref={videoRef}
+                                                className="w-full h-64 bg-black object-cover"
+                                                playsInline
+                                                autoPlay
+                                            />
+                                            <canvas
+                                                ref={canvasRef}
+                                                className="hidden"
+                                            />
+                                            <div className="absolute inset-0 border-2 border-green-500 opacity-50 pointer-events-none">
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    <div className="w-48 h-48 border-2 border-white opacity-70"></div>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                                <p className="text-center text-gray-600 my-2">Position QR code within the frame</p>
+                                <div className="mt-4">
+                                    <button
+                                        className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                        onClick={closeScanner}
+                                    >
+                                        Close Scanner
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
