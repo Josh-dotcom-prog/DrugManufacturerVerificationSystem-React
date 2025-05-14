@@ -186,10 +186,10 @@ const DrugVerificationSystem = () => {
 
         const drugData = {
             name: drugName || "Unknown",
+            strength: strength || "Unknown",
             manufacturer: manufacturer || "Unknown",
             batchNumber: batchNumber || "Unknown",
             expiryDate: "2026-01-25", // This would come from your database
-            manufacturerDate: "2025-01-31",
             verified: true
         };
 
