@@ -27,8 +27,8 @@ const DrugVerificationSystem = () => {
 
     // Validate QR code format (adjust this to match your actual QR code format)
     const isValidDrugQRCode = (qrData) => {
-        // Example pattern: DRUGNAME-STRENGTH-BATCH-MANUFACTURER
-        const drugQrPattern = /^[A-Z0-9]+-[A-Z0-9]+-[A-Z0-9]+-[A-Z0-9]+$/;
+        // Example: DRUG-AMOX-500MG-BT20240125-PHARMACO
+        const drugQrPattern = /^DRUG-[A-Z]+-\d+[A-Z]*-[A-Z0-9]+-[A-Z]+$/;
         return drugQrPattern.test(qrData);
     };
 

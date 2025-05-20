@@ -32,7 +32,7 @@ const Drugs = () => {
         setDrugData(formData);
 
         // Here you would typically send the data to your backend API
-        // console.log('Drug registered:', formData);
+        console.log('Drug registered:', formData);
         // Navigate to QR code page
         navigate('/qrcode', { state: { drugData: formData } });
     };

@@ -8,6 +8,7 @@ const Signup = () => {
         email: '',
         phone: '',
         Address: '',
+        License: '',
         password: '',
         confirmPassword: '',
         termsAccepted: false
@@ -19,6 +20,7 @@ const Signup = () => {
         email: '',
         phone: '',
         Address: '',
+        License: '',
         password: '',
         confirmPassword: '',
         termsAccepted: ''
@@ -66,6 +68,12 @@ const Signup = () => {
                     errorMessage = 'Address is required';
                 } else if (value.trim().length < 5) {
                     errorMessage = 'Please enter a complete address';
+                }
+                break;
+
+            case 'License':
+                if (!value) {
+                    errorMessage = 'Upload License/Certificate is required';
                 }
                 break;
 
@@ -183,6 +191,7 @@ const Signup = () => {
                 </div>
                 <div className="p-6">
                     <form onSubmit={handleSubmit} noValidate>
+                        {/* manufacturer information  */}
                         <div className="mb-4">
                             <label className="block text-gray-700 mb-2 font-bold">Manufacturer Information</label>
                             <div className="mb-3">
@@ -211,6 +220,7 @@ const Signup = () => {
                             </div>
                         </div>
 
+                        {/* contact information */}
                         <div className="mb-4">
                             <label className="block text-gray-700 mb-2 font-bold">Contact Information</label>
                             <div className="mb-3">
@@ -239,6 +249,7 @@ const Signup = () => {
                             </div>
                         </div>
 
+                        {/* address  */}
                         <div className="mb-4">
                             <label className="block text-gray-700 mb-2 font-bold">Manufacturer Address</label>
                             <div>
@@ -255,6 +266,24 @@ const Signup = () => {
                             </div>
                         </div>
 
+                        {/* License and certificate upload */}
+                        <div className="mb-4">
+                            <label className="block text-gray-700 mb-2 font-bold">License/Certificate</label>
+                            <div className="mb-3">
+                                <input
+                                    type="file"
+                                    name="License"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    className={`w-full px-4 py-2 border rounded-md focus:outline-none ${errors.License ? 'border-red-500 focus:ring-red-500' : 'focus:ring-2 focus:ring-green-500'}`}
+                                />
+                                <p className="text-gray-500 text-xs mt-1">Upload your manufacturing license or certificate (Must be a PDF)</p>
+                                {errors.License && <p className="text-red-500 text-sm mt-1">{errors.License}</p>}
+                            </div>
+                        </div>
+
+                        {/* Account security */}
                         <div className="mb-4">
                             <label className="block text-gray-700 mb-2 font-bold">Account Security</label>
                             <div className="mb-3">
@@ -324,8 +353,8 @@ const Signup = () => {
                             <i className="fas fa-info-circle mr-2"></i> Verification Process
                         </h3>
                         <p className="text-sm text-green-700">
-                            After signing up, we'll verify your pharmaceutical license and Manufacturer information before activating your account.
-                            This process typically takes 1-2 business days.
+                            We'll verify your license and Manufacturer information before activating your account.
+                            This process will take 24 hours.
                         </p>
                     </div>
                 </div>
