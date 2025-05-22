@@ -51,7 +51,7 @@ const ManufacturersDashboard = () => {
                         </div>
                         <div>
                             <span className="mr-4">Welcome,
-                                <strong className="text-green-600">Pharma Manufacturer</strong>
+                                <strong className="text-green-600">Pharma</strong>
                             </span>
                             <a href="logout.php"
                                 className="bg-white text-green-800 px-4 py-2 rounded-md font-medium hover:bg-green-100">Logout</a>
@@ -65,7 +65,6 @@ const ManufacturersDashboard = () => {
                         <h3 className="text-yellow-500 text-sm font-medium mb-2">TOTAL DRUGS</h3>
                         <p className="text-3xl font-bold mb-1">37</p>
                         <p className="text-yellow-600 text-sm flex items-center">
-                            <i className="fas fa-arrow-up mr-1"></i> 2 new this month
                         </p>
                         <i className="fas fa-capsules text-3xl text-yellow-100 absolute top-6 right-6"></i>
                     </div>
@@ -74,7 +73,6 @@ const ManufacturersDashboard = () => {
                         <h3 className="text-green-500 text-sm font-medium mb-2">ACTIVE DRUGS</h3>
                         <p className="text-3xl font-bold mb-1">218</p>
                         <p className="text-green-600 text-sm flex items-center">
-                            <i className="fas fa-arrow-up mr-1"></i> 15 new this month
                         </p>
                         <i className="fas fa-boxes text-3xl text-green-100 absolute top-6 right-6"></i>
                     </div>
@@ -83,7 +81,6 @@ const ManufacturersDashboard = () => {
                         <h3 className="text-red-500 text-sm font-medium mb-2">EXPIRED DRUGS</h3>
                         <p className="text-3xl font-bold mb-1">34</p>
                         <p className="text-green-600 text-sm flex items-center">
-                            <i className="fas fa-arrow-up mr-1"></i> 10 new this month
                         </p>
                         <i className="fas fa-capsules text-3xl text-red-100 absolute top-6 right-6"></i>
                     </div>
@@ -91,10 +88,10 @@ const ManufacturersDashboard = () => {
 
                 {/* <!-- Tables --> */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* <!-- Pending Approvals --> */}
+                    {/* <!-- Expired drugs --> */}
                     <div className="bg-white rounded-lg shadow overflow-hidden">
                         <div className="p-6 border-b border-gray-200">
-                            <h3 className="text-lg font-medium">Expired Drugs</h3>
+                            <h3 className="text-lg font-bold">Expired Drugs</h3>
                             <p className="text-gray-500 text-sm">Expired Drugs in the System</p>
                         </div>
                         <table className="min-w-full divide-y divide-gray-200">
@@ -104,13 +101,13 @@ const ManufacturersDashboard = () => {
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-200"></div>
                                             <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">BTC202524</div>
+                                                <div className="text-sm font-medium text-gray-900">Omepraso</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Active
+                                        <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Expired
                                         </span>
                                     </td>
                                 </tr>
@@ -119,22 +116,7 @@ const ManufacturersDashboard = () => {
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-200"></div>
                                             <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">BTC202524</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Active
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center">
-                                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200"></div>
-                                            <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">BTC202524</div>
+                                                <div className="text-sm font-medium text-gray-900">Panadol</div>
                                             </div>
                                         </div>
                                     </td>
@@ -151,8 +133,8 @@ const ManufacturersDashboard = () => {
                     {/* <!-- Recent Drugs --> */}
                     <div className="bg-white rounded-lg shadow overflow-hidden">
                         <div className="p-6 border-b border-gray-200">
-                            <h3 className="text-lg font-medium">Recent Drugs</h3>
-                            <p className="text-gray-500 text-sm">Recently registered Drugs in the system</p>
+                            <h3 className="text-lg font-bold">Active Drugs</h3>
+                            <p className="text-gray-500 text-sm">Active DRugs in the system</p>
                         </div>
                         <table className="min-w-full divide-y divide-gray-200">
                             <tbody className="bg-white divide-y divide-gray-200">

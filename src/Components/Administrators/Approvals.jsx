@@ -1,6 +1,14 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 const Approvals = () => {
+    const navigate = useNavigate();
+
+    const handleViewManufacturer = (manufacturerId) => {
+        // Navigate to manufacturer details page with ID
+        navigate(`/manufacturerdetails/`);
+    };
     return (
 
         <div class="flex h-screen overflow-hidden">
@@ -59,7 +67,7 @@ const Approvals = () => {
                         <p class="text-gray-600">Review and manage pending manufacturer approval requests</p>
                     </div>
 
-                    {/* <!-- Products Table Section --> */}
+                    {/* <!-- Manufacturers Table Section --> */}
                     <div id="productsSection" class="mb-8 bg-white rounded-lg shadow-sm overflow-hidden p-6">
                         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                             <div class="flex bg-gray-100 px-3 py-2 rounded-md">
@@ -98,17 +106,9 @@ const Approvals = () => {
                                         <td class="px-6 py-4 whitespace-nowrap">6/22/2023</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex space-x-2">
-                                                <button class="text-gray-500 hover:text-gray-700 border border-gray-300 rounded px-2 py-1">
+                                                <button onClick={() => handleViewManufacturer()} class="text-gray-500 hover:text-gray-700 border border-gray-300 rounded px-2 py-1">
                                                     <i class="fas fa-eye mr-2"></i>
                                                     View
-                                                </button>
-                                                <button class="text-green-500 hover:text-green-700 border border-green-300 rounded px-2 py-1">
-                                                    <i class="fas fa-check mr-2"></i>
-                                                    Approve
-                                                </button>
-                                                <button class="text-red-500 hover:text-red-700 border border-red-300 rounded px-2 py-1">
-                                                    <i class="fas fa-close mr-2"></i>
-                                                    Reject
                                                 </button>
                                             </div>
                                         </td>
@@ -120,17 +120,9 @@ const Approvals = () => {
                                         <td class="px-6 py-4 whitespace-nowrap">9/18/2023</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex space-x-2">
-                                                <button class="text-gray-500 hover:text-gray-700 border border-gray-300 rounded px-2 py-1">
+                                                <button onClick={() => handleViewManufacturer()} class="text-gray-500 hover:text-gray-700 border border-gray-300 rounded px-2 py-1">
                                                     <i class="fas fa-eye mr-2"></i>
                                                     View
-                                                </button>
-                                                <button class="text-green-500 hover:text-green-700 border border-green-300 rounded px-2 py-1">
-                                                    <i class="fas fa-check mr-2"></i>
-                                                    Approve
-                                                </button>
-                                                <button class="text-red-500 hover:text-red-700 border border-red-300 rounded px-2 py-1">
-                                                    <i class="fas fa-close mr-2"></i>
-                                                    Reject
                                                 </button>
                                             </div>
                                         </td>

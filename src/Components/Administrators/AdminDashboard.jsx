@@ -67,11 +67,7 @@ const AdminDashboard = () => {
                                 <span class="text-gray-500"><i class="fas fa-users"></i></span>
                             </div>
                             <div class="flex items-baseline">
-                                <h2 class="text-3xl font-bold">142</h2>
-                            </div>
-                            <div class="flex items-center mt-2">
-                                <span class="text-green-500 text-sm mr-1"><i class="fas fa-arrow-up"></i> 12%</span>
-                                <span class="text-gray-500 text-sm">from last month</span>
+                                <h2 class="text-3xl font-bold">3</h2>
                             </div>
                         </div>
 
@@ -82,10 +78,7 @@ const AdminDashboard = () => {
                                 <span class="text-gray-500"><i class="fas fa-clock"></i></span>
                             </div>
                             <div class="flex items-baseline">
-                                <h2 class="text-3xl font-bold">23</h2>
-                            </div>
-                            <div class="flex items-center mt-2">
-                                <span class="text-gray-500 text-sm">5 new requests today</span>
+                                <h2 class="text-3xl font-bold">1</h2>
                             </div>
                         </div>
 
@@ -96,11 +89,7 @@ const AdminDashboard = () => {
                                 <span class="text-gray-500"><i class="fas fa-check"></i></span>
                             </div>
                             <div class="flex items-baseline">
-                                <h2 class="text-3xl font-bold">119</h2>
-                            </div>
-                            <div class="flex items-center mt-2">
-                                <span class="text-green-500 text-sm mr-1"><i class="fas fa-arrow-up"></i> 8%</span>
-                                <span class="text-gray-500 text-sm">from last month</span>
+                                <h2 class="text-3xl font-bold">2</h2>
                             </div>
                         </div>
                     </div>
@@ -110,49 +99,11 @@ const AdminDashboard = () => {
                         {/* <!-- Pending Approvals --> */}
                         <div class="bg-white rounded-lg shadow overflow-hidden">
                             <div class="p-6 border-b border-gray-200">
-                                <h3 class="text-lg font-medium">Pending Approvals</h3>
+                                <h3 class="text-lg font-bold">Pending Approvals</h3>
                                 <p class="text-gray-500 text-sm">Manufacturers waiting for verification approval</p>
                             </div>
                             <table class="min-w-full divide-y divide-gray-200">
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-6 py-4">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200"></div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">MediCorp Industries</div>
-                                                    <div class="text-sm text-gray-500">info@medicorp.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <button class="p-1 rounded-full text-green-500 hover:bg-gray-100 mr-2">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                            <button class="p-1 rounded-full text-red-500 hover:bg-gray-100">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200"></div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">PharmaTech Solutions</div>
-                                                    <div class="text-sm text-gray-500">contact@pharmatech.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <button class="p-1 rounded-full text-green-500 hover:bg-gray-100 mr-2">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                            <button class="p-1 rounded-full text-red-500 hover:bg-gray-100">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
                                     <tr>
                                         <td class="px-6 py-4">
                                             <div class="flex items-center">
@@ -164,22 +115,19 @@ const AdminDashboard = () => {
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <button class="p-1 rounded-full text-green-500 hover:bg-gray-100 mr-2">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                            <button class="p-1 rounded-full text-red-500 hover:bg-gray-100">
-                                                <i class="fas fa-times"></i>
-                                            </button>
+                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                pending
+                                            </span>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        {/* <!-- Recent Manufacturers --> */}
+                        {/* <!-- Approved Manufacturers --> */}
                         <div class="bg-white rounded-lg shadow overflow-hidden">
                             <div class="p-6 border-b border-gray-200">
-                                <h3 class="text-lg font-medium">Recent Manufacturers</h3>
+                                <h3 class="text-lg font-bold">Approved Manufacturers</h3>
                                 <p class="text-gray-500 text-sm">Recently registered manufacturers in the system</p>
                             </div>
                             <table class="min-w-full divide-y divide-gray-200">
@@ -211,40 +159,8 @@ const AdminDashboard = () => {
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                pending
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200"></div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">HealthGen Labs</div>
-                                                    <div class="text-sm text-gray-500">support@healthgen.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
                                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                 approved
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200"></div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">BioTech Solutions</div>
-                                                    <div class="text-sm text-gray-500">admin@biotech.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                rejected
                                             </span>
                                         </td>
                                     </tr>

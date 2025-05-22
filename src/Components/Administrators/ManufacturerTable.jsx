@@ -59,7 +59,7 @@ const ManufacturerTable = () => {
                         <p class="text-gray-600">Manage and view all registered manufacturers in the system</p>
                     </div>
 
-                    {/* <!-- Products Table Section --> */}
+                    {/* <!-- Manufacturers Table Section --> */}
                     <div id="productsSection" class="mb-8 bg-white rounded-lg shadow-sm overflow-hidden p-6">
                         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                             <div class="flex bg-gray-100 px-3 py-2 rounded-md">
@@ -89,9 +89,6 @@ const ManufacturerTable = () => {
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Status</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -102,20 +99,7 @@ const ManufacturerTable = () => {
                                         <td class="px-6 py-4 whitespace-nowrap">Capsule</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex space-x-2">
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-qrcode"></i>
-                                                </button>
-                                            </div>
+                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -125,20 +109,7 @@ const ManufacturerTable = () => {
                                         <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex space-x-2">
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-qrcode"></i>
-                                                </button>
-                                            </div>
+                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aproved</span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -148,66 +119,7 @@ const ManufacturerTable = () => {
                                         <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Expired</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex space-x-2">
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-qrcode"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">Metformin</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">A4-1922</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Antidiabetic</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Expired</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex space-x-2">
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-qrcode"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">Diazepam</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">A4-3110</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Sedative</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Expired</span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex space-x-2">
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="text-gray-500 hover:text-gray-700">
-                                                    <i class="fas fa-redo"></i>
-                                                </button>
-                                            </div>
+                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
                                         </td>
                                     </tr>
                                 </tbody>

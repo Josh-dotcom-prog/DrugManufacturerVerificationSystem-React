@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Download, Check, X, FileText } from 'lucide-react';
 
-const ManufacturerDetails = () => {
+const DrugDetails = () => {
     const [showApprovalModal, setShowApprovalModal] = useState(false);
     const [showRejectionModal, setShowRejectionModal] = useState(false);
 
@@ -210,4 +210,4 @@ const ManufacturerDetails = () => {
     );
 };
 
-export default ManufacturerDetails;
+export default DrugDetails;
