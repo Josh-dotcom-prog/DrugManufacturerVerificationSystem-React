@@ -37,12 +37,13 @@ const App = () => {
           <Route path="/resultsection" element={<ResultSection />} />
           <Route path="/userregistration" element={<UserRegistration />} />
           <Route path="/drugs" element={<Drugs />} />
+
           <Route path="/manufacturertable" element={<ManufacturerTable />} />
           <Route path="approvals" element={<Approvals />} />
           <Route path="/qrcode" element={<DrugQRCode />} />
           <Route path="/verification" element={<DrugVerification />} />
           <Route path="/manufacturerdetails" element={<ManufacturerDetails />} />
-          <Route path="/drugdetails" element={<DrugDetails />} />
+          <Route path="/drugdetails/:id" element={<DrugDetails />} />
           {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

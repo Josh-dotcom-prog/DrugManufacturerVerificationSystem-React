@@ -87,14 +87,14 @@ const DrugQRCode = () => {
                             >
                                 <i className="fas fa-download mr-2"></i> Download QR Code
                             </button>
-                            <a
+                            {/* <a
                                 href={verificationUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors text-center"
                             >
                                 <i className="fas fa-external-link-alt mr-2"></i> Test Verification
-                            </a>
+                            </a> */}
                         </div>
                     </div>
 

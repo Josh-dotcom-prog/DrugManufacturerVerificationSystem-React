@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Download, Check, X, FileText } from 'lucide-react';
+import { ArrowLeft, Download, Check, X, FileText, Eye } from 'lucide-react';
 
 const ManufacturerDetails = () => {
     const [showApprovalModal, setShowApprovalModal] = useState(false);
@@ -101,6 +101,7 @@ const ManufacturerDetails = () => {
                     </div>
 
                     {/* Certificate Section */}
+
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Certificate of Operation</h3>
                         <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-gray-50">
@@ -112,14 +113,15 @@ const ManufacturerDetails = () => {
                                 </div>
                             </div>
                             <button
-                                onClick={handleDownloadCertificate}
+                                onClick={() => window.open(manufacturer.certificateUrl, '_blank')}
                                 className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                             >
-                                <Download className="w-4 h-4 mr-2" />
-                                Download
+                                <Eye className="w-4 h-4 mr-2" />
+                                View
                             </button>
                         </div>
                     </div>
+
 
                     {/* Action Buttons */}
                     <div className="flex justify-end space-x-4">

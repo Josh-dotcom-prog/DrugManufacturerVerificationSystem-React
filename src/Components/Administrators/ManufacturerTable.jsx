@@ -93,33 +93,13 @@ const ManufacturerTable = () => {
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">Amoxicillin</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">A4-0142</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Antibiotic</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Capsule</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">Abacus</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">info@abacus.ac.ug</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">Nakawa,Kampala</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">31 May, 2025</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
                                                 class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">Paracetamol</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">A4-1853</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Analgesic</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aproved</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">Ciprofloxacin</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">A4-2241</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Antibiotic</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Tablet</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
                                         </td>
                                     </tr>
                                 </tbody>
