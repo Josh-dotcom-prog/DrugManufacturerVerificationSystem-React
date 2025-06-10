@@ -1,119 +1,88 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, Save } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Save, X } from 'lucide-react';
+import api from '../../utils/axios';
 
 const DrugDetails = () => {
-    const { id } = useParams(); // Get drug ID from URL
+    const { id } = useParams();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const editMode = searchParams.get('edit') === 'true'; // Check if edit mode from URL
+    const editMode = searchParams.get('edit') === 'true';
 
-    const [showApprovalModal, setShowApprovalModal] = useState(false);
-    const [showRejectionModal, setShowRejectionModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isEditing, setIsEditing] = useState(editMode);
     const [editedDrug, setEditedDrug] = useState({});
     const [loading, setLoading] = useState(true);
-
-    // Sample drugs data - in real app this would come from API
-    const sampleDrugs = {
-        1: {
-            id: 1,
-            drugName: "Amoxicillin 500mg",
-            category: "Antibiotic",
-            dosageForm: "Capsule",
-            batchNumber: "BTC202579",
-            manufactureDate: "2024-01-15",
-            expiryDate: "2026-01-15",
-            countryOfOrigin: "United Kingdom",
-            description: "Amoxicillin is a penicillin antibiotic used to treat bacterial infections including pneumonia, bronchitis, and infections of the ear, nose, throat, skin, and urinary tract.",
-            status: "Active",
-        },
-        2: {
-            id: 2,
-            drugName: "Paracetamol 500mg",
-            category: "Analgesic",
-            dosageForm: "Tablet",
-            batchNumber: "PCT202580",
-            manufactureDate: "2024-02-10",
-            expiryDate: "2026-02-10",
-            countryOfOrigin: "India",
-            description: "Paracetamol is a pain reliever and fever reducer used to treat mild to moderate pain and reduce fever.",
-            registrationDate: "2024-02-15",
-            status: "Active",
-        }
-        // Add more sample drugs as needed
-    };
-
     const [drug, setDrug] = useState(null);
+    const [error, setError] = useState(null);
+
 
     // Categories and dosage forms for dropdowns
     const categories = [
-        "Antibiotic", "Analgesic", "Antiviral", "Antidiabetic",
-        "Antihistamine", "Antihypertensive"
+        "antibiotic", "analgesic", "antiviral", "antidiabetic",
+        "antihistamine", "antihypertensive"
     ];
 
     const dosageForms = [
-        "Tablet", "Capsule", "Syrup", "Injection", "Cream", "Ointment"
+        "tablet", "capsule", "syrup", "injection", "cream", "ointment"
     ];
 
-    // Load drug data when component mounts or ID changes
+    // Load drug data from API
     useEffect(() => {
-        const loadDrug = () => {
-            setLoading(true);
-            // In real app, this would be an API call
-            const drugData = sampleDrugs[parseInt(id)];
+        const fetchDrug = async () => {
+            try {
+                setLoading(true);
+                const response = await api.get(`/drug/drug?drug_id=${id}`);
+                console.log('Fetched Drug Detail Data:', response.data);
 
-            if (drugData) {
-                setDrug(drugData);
+                // Transform the API response to match your frontend structure
+                const transformedDrug = {
+                    id: response.data.id,
+                    drugName: response.data.name,
+                    category: response.data.category,
+                    dosageForm: response.data.dosage_form,
+                    manufacturer: response.data.manufacturer,
+                    batchNumber: response.data.batch_number,
+                    countryOfOrigin: response.data.country_of_origin,
+                    manufactureDate: response.data.manufacturing_date.split('T')[0],
+                    expiryDate: response.data.expiry_date.split('T')[0],
+                    description: response.data.description,
+                    registrationDate: response.data.created_at,
+                    status: "Active" // Assuming all drugs from API are active
+                };
+
+                setDrug(transformedDrug);
                 if (editMode) {
-                    setEditedDrug({ ...drugData });
+                    setEditedDrug(transformedDrug);
                 }
-            } else {
-                // Drug not found, redirect to drugs list
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching drug:', err);
+                setError('Failed to load drug details');
                 navigate('/drugs');
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
         if (id) {
-            loadDrug();
+            fetchDrug();
         }
     }, [id, editMode, navigate]);
 
-    const handleApprove = () => {
-        setShowApprovalModal(false);
-        // Update drug status
-        setDrug(prev => ({ ...prev, status: "Active" }));
-        console.log("Drug approved");
-    };
-
-    const handleReject = () => {
-        if (rejectionReason.trim()) {
-            setShowRejectionModal(false);
-            // Update drug status
-            setDrug(prev => ({ ...prev, status: "Rejected" }));
-            console.log("Drug rejected with reason:", rejectionReason);
-        }
-    };
-
-
-    // CRUD Operations
     const handleEdit = () => {
         setIsEditing(true);
         setEditedDrug({ ...drug });
-        // Update URL to include edit parameter
         navigate(`/drugdetails/${id}?edit=true`);
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
         setEditedDrug({});
-        // Remove edit parameter from URL
         navigate(`/drugdetails/${id}`);
     };
 
-    const handleSaveEdit = () => {
+    const handleSaveEdit = async () => {
         // Validate required fields
         if (!editedDrug.drugName || !editedDrug.category || !editedDrug.dosageForm ||
             !editedDrug.batchNumber || !editedDrug.manufactureDate || !editedDrug.expiryDate ||
@@ -128,24 +97,61 @@ const DrugDetails = () => {
             return;
         }
 
-        // Update the drug data
-        setDrug({ ...editedDrug });
-        setIsEditing(false);
-        setEditedDrug({});
+        try {
+            // Prepare the data for API in the required format
+            const updatedData = {
+                name: editedDrug.drugName,
+                category: editedDrug.category,
+                dosage_form: editedDrug.dosageForm,
+                manufacturer: editedDrug.manufacturer,
+                batch_number: editedDrug.batchNumber,
+                country_of_origin: editedDrug.countryOfOrigin,
+                manufacturing_date: editedDrug.manufactureDate,
+                expiry_date: editedDrug.expiryDate,
+                description: editedDrug.description
+            };
 
-        // Remove edit parameter from URL
-        navigate(`/drugdetails/${id}`);
+            // Send PUT request to update the drug
+            const response = await axios.put(`${API_BASE_URL}/${id}/`, updatedData);
 
-        console.log("Drug updated:", editedDrug);
-        // Here you would typically send the updated data to your backend API
+            // Transform the response back to frontend format
+            const transformedDrug = {
+                id: response.data.id,
+                drugName: response.data.name,
+                category: response.data.category,
+                dosageForm: response.data.dosage_form,
+                manufacturer: response.data.manufacturer,
+                batchNumber: response.data.batch_number,
+                countryOfOrigin: response.data.country_of_origin,
+                manufactureDate: response.data.manufacturing_date.split('T')[0],
+                expiryDate: response.data.expiry_date.split('T')[0],
+                description: response.data.description,
+                registrationDate: response.data.created_at,
+                status: "Active"
+            };
+
+            setDrug(transformedDrug);
+            setIsEditing(false);
+            setEditedDrug({});
+            navigate(`/drugdetails/${id}`);
+
+            console.log("Drug updated successfully:", response.data);
+        } catch (err) {
+            console.error('Error updating drug:', err);
+            alert('Failed to update drug. Please try again.');
+        }
     };
 
-    const handleDelete = () => {
-        setShowDeleteModal(false);
-        console.log("Drug deleted:", drug.id);
-        // Here you would typically send delete request to your backend API
-        // Then navigate back to the drugs list
-        navigate('/drugs');
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`${API_BASE_URL}/${id}/`);
+            setShowDeleteModal(false);
+            console.log("Drug deleted successfully");
+            navigate('/drugs');
+        } catch (err) {
+            console.error('Error deleting drug:', err);
+            alert('Failed to delete drug. Please try again.');
+        }
     };
 
     const handleInputChange = (field, value) => {
@@ -163,7 +169,7 @@ const DrugDetails = () => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             {label}
                         </label>
-                        <p className="text-gray-900">{new Date(value).toLocaleDateString()}</p>
+                        <p className="text-gray-900">{value ? new Date(value).toLocaleDateString() : 'N/A'}</p>
                     </div>
                 );
             }
@@ -172,7 +178,7 @@ const DrugDetails = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         {label}
                     </label>
-                    <p className="text-gray-900">{value}</p>
+                    <p className="text-gray-900">{value || 'N/A'}</p>
                 </div>
             );
         }
@@ -236,6 +242,23 @@ const DrugDetails = () => {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">Loading drug details...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold text-gray-800">Error Loading Drug</h1>
+                    <p className="text-gray-600 mt-2">{error}</p>
+                    <button
+                        onClick={() => navigate('/drugs')}
+                        className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                        Back to Drugs List
+                    </button>
                 </div>
             </div>
         );
@@ -329,6 +352,7 @@ const DrugDetails = () => {
                                 {renderField("Category", "category", drug.category, "select", categories)}
                                 {renderField("Dosage Form", "dosageForm", drug.dosageForm, "select", dosageForms)}
                                 {renderField("Batch Number", "batchNumber", drug.batchNumber)}
+                                {renderField("Manufacturer", "manufacturer", drug.manufacturer)}
                             </div>
 
                             {/* Right Column */}
@@ -343,7 +367,9 @@ const DrugDetails = () => {
                                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                                 Registration Date
                                             </label>
-                                            <p className="text-gray-900">{new Date(drug.registrationDate).toLocaleDateString()}</p>
+                                            <p className="text-gray-900">
+                                                {drug.registrationDate ? new Date(drug.registrationDate).toLocaleDateString() : 'N/A'}
+                                            </p>
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -366,7 +392,6 @@ const DrugDetails = () => {
                             {renderField("Description", "description", drug.description, "textarea")}
                         </div>
                     </div>
-
                 </main>
             </div>
 

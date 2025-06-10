@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, Edit, Trash2, Search, Plus, X } from 'lucide-react';
+import api from '../../utils/axios';
 
 const Drugs = () => {
     const [showRegistrationForm, setShowRegistrationForm] = useState(false);
@@ -8,78 +9,57 @@ const Drugs = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [drugToDelete, setDrugToDelete] = useState(null);
+    const [drugs, setDrugs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
-    // Sample drugs data with proper IDs
-    const [drugs, setDrugs] = useState([
-        {
-            id: 1,
-            drugName: "Amoxicillin",
-            category: "Antibiotic",
-            dosageForm: "Capsule",
-            batchNumber: "BTC202579",
-            manufactureDate: "2024-01-15",
-            expiryDate: "2026-01-15",
-            manufacturer: "MediCorp Industries",
-            countryOfOrigin: "United Kingdom",
-            description: "Amoxicillin is a penicillin antibiotic used to treat bacterial infections.",
-            registrationDate: "2025-01-12",
-            status: "Active"
-        },
-        {
-            id: 2,
-            drugName: "Paracetamol",
-            category: "Analgesic",
-            dosageForm: "Tablet",
-            batchNumber: "PCT202580",
-            manufactureDate: "2024-02-10",
-            expiryDate: "2026-02-10",
-            countryOfOrigin: "India",
-            description: "Paracetamol is a pain reliever and fever reducer.",
-            registrationDate: "2024-11-23",
-            status: "Active"
-        },
-        {
-            id: 3,
-            drugName: "Ciprofloxacin",
-            category: "Antibiotic",
-            dosageForm: "Tablet",
-            batchNumber: "CPX202581",
-            manufactureDate: "2023-02-07",
-            expiryDate: "2025-02-07",
-            countryOfOrigin: "USA",
-            description: "Ciprofloxacin is a fluoroquinolone antibiotic.",
-            registrationDate: "2025-02-07",
-            status: "Expired"
-        },
-        {
-            id: 4,
-            drugName: "Metformin",
-            category: "Antidiabetic",
-            dosageForm: "Tablet",
-            batchNumber: "MET202582",
-            manufactureDate: "2023-12-15",
-            expiryDate: "2024-12-15",
-            manufacturer: "DiabetCare Ltd",
-            countryOfOrigin: "Canada",
-            description: "Metformin is used to treat type 2 diabetes.",
-            registrationDate: "2024-12-15",
-            status: "Expired"
-        },
-        {
-            id: 5,
-            drugName: "Diazepam",
-            category: "Sedative",
-            dosageForm: "Tablet",
-            batchNumber: "DZP202583",
-            manufactureDate: "2023-09-03",
-            expiryDate: "2024-09-03",
-            countryOfOrigin: "Germany",
-            description: "Diazepam is a benzodiazepine medication.",
-            registrationDate: "2024-09-03",
-            status: "Expired"
+    // Fetch drugs from API
+    useEffect(() => {
+        fetchDrugs();
+    }, []);
+
+    const fetchDrugs = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError('Unauthorized. Please login again.');
+                setLoading(false);
+                return;
+            }
+
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+
+            const response = await api.get('/drug/drugs', { headers });
+            console.log('Fetched drugs:', response.data);
+
+            // Transform API data to match component structure
+            const transformedDrugs = response.data.map(drug => ({
+                id: drug.id,
+                drugName: drug.name,
+                category: drug.category,
+                dosageForm: drug.dosage_form,
+                batchNumber: drug.batch_number,
+                manufactureDate: drug.manufacturing_date,
+                expiryDate: drug.expiry_date,
+                manufacturer: drug.manufacturer,
+                countryOfOrigin: drug.country_of_origin,
+                description: drug.description,
+                registrationDate: drug.created_at,
+                status: new Date(drug.expiry_date) > new Date() ? 'Active' : 'Expired'
+            }));
+
+            setDrugs(transformedDrugs);
+            setLoading(false);
+        } catch (err) {
+            console.error('Error fetching drugs:', err);
+            setError('Failed to load drugs data.');
+            setLoading(false);
         }
-    ]);
+    };
 
     // Filter drugs based on search term
     const filteredDrugs = drugs.filter(drug =>
@@ -92,42 +72,61 @@ const Drugs = () => {
         setShowRegistrationForm(!showRegistrationForm);
     };
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
+        setSubmitting(true);
 
-        // Generate new ID
-        const newId = Math.max(...drugs.map(d => d.id), 0) + 1;
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Unauthorized');
+            }
 
-        // Collect form data
-        const formData = {
-            id: newId,
-            drugName: e.target.drugName.value,
-            category: e.target.category.value,
-            dosageForm: e.target.dosageForm.value,
-            batchNumber: e.target.strength.value,
-            manufactureDate: e.target.manufactureDate.value,
-            expiryDate: e.target.expiryDate.value,
-            countryOfOrigin: e.target.countryOfOrigin.value,
-            description: e.target.description.value,
-            status: "Authentic Manufacturer",
-        };
+            const headers = {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            };
 
-        // Add new drug to the list
-        setDrugs(prevDrugs => [...prevDrugs, formData]);
+            // Collect form data matching API structure
+            const formData = {
+                name: e.target.drugName.value,
+                category: e.target.category.value,
+                dosage_form: e.target.dosageForm.value,
+                manufacturer: "Current Manufacturer", // You might want to get this from user context
+                batch_number: e.target.strength.value,
+                country_of_origin: e.target.countryOfOrigin.value,
+                manufacturing_date: e.target.manufactureDate.value,
+                expiry_date: e.target.expiryDate.value,
+                description: e.target.description.value,
+            };
 
-        // Store the drug data for QR code generation
-        setDrugData(formData);
+            console.log('Submitting drug data:', formData);
 
-        // Close the form
-        setShowRegistrationForm(false);
+            // Submit to API
+            const response = await api.post('/drug/create', formData, { headers });
+            console.log('Drug registered successfully:', response.data);
 
-        // Reset form
-        e.target.reset();
+            // Refresh the drugs list
+            await fetchDrugs();
 
-        console.log('Drug registered:', formData);
+            // Store the drug data for QR code generation
+            setDrugData(response.data);
 
-        // Navigate to QR code page (if you have this route)
-        navigate('/qrcode', { state: { drugData: formData } });
+            // Close the form
+            setShowRegistrationForm(false);
+
+            // Reset form
+            e.target.reset();
+
+            // Navigate to QR code page (if you have this route)
+            navigate('/qrcode', { state: { drugData: response.data } });
+
+        } catch (err) {
+            console.error('Error registering drug:', err);
+            setError('Failed to register drug. Please try again.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     // Navigation functions
@@ -144,14 +143,37 @@ const Drugs = () => {
         setShowDeleteModal(true);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         if (drugToDelete) {
-            setDrugs(prevDrugs => prevDrugs.filter(drug => drug.id !== drugToDelete.id));
-            setShowDeleteModal(false);
-            setDrugToDelete(null);
-            console.log('Drug deleted:', drugToDelete.id);
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    throw new Error('Unauthorized');
+                }
+
+                const headers = {
+                    Authorization: `Bearer ${token}`,
+                };
+
+                // Delete from API
+                await api.delete(`/drug/delete?drug_id=${drugToDelete.id}`, { headers });
+                console.log('Drug deleted successfully:', drugToDelete.id);
+
+                // Remove from local state
+                setDrugs(prevDrugs => prevDrugs.filter(drug => drug.id !== drugToDelete.id));
+
+                setShowDeleteModal(false);
+                setDrugToDelete(null);
+            } catch (err) {
+                console.error('Error deleting drug:', err);
+                setError('Failed to delete drug. Please try again.');
+                setShowDeleteModal(false);
+                setDrugToDelete(null);
+            }
         }
     };
+
+    if (loading) return <div className="p-6 text-gray-600">Loading drugs...</div>;
 
     return (
         <div className="flex h-screen overflow-hidden">
@@ -188,11 +210,24 @@ const Drugs = () => {
                             <span className="mr-4">Welcome,
                                 <strong className="text-green-600">Pharma Manufacturer</strong>
                             </span>
-                            <a href="logout.php"
+                            <a href="/login"
                                 className="bg-white text-green-800 px-4 py-2 rounded-md font-medium hover:bg-green-100">Logout</a>
                         </div>
                     </div>
                 </div>
+
+                {/* Error Display */}
+                {error && (
+                    <div className="mx-6 mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                        <p className="text-red-600">{error}</p>
+                        <button
+                            onClick={() => setError('')}
+                            className="mt-2 text-sm text-red-500 hover:text-red-700"
+                        >
+                            Dismiss
+                        </button>
+                    </div>
+                )}
 
                 {/* Products Table Section - shown when form is hidden */}
                 {!showRegistrationForm && (
@@ -232,7 +267,9 @@ const Drugs = () => {
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Dosage Form</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Registration Date</th>
+                                            Batch Number</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Expiry Date</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Status</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -253,12 +290,13 @@ const Drugs = () => {
                                                     {drug.dosageForm}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-gray-500">
-                                                    {new Date(drug.registrationDate).toLocaleDateString()}
+                                                    {drug.batchNumber}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                                                    {new Date(drug.expiryDate).toLocaleDateString()}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${drug.status === 'Active' ? 'bg-green-100 text-green-800' :
-                                                        drug.status === 'Pending Approval' ? 'bg-yellow-100 text-yellow-800' :
-                                                            'bg-red-100 text-red-800'
+                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${drug.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                                         }`}>
                                                         {drug.status}
                                                     </span>
@@ -273,14 +311,6 @@ const Drugs = () => {
                                                             <Eye className="w-4 h-4 mr-1" />
                                                             View
                                                         </button>
-                                                        {/* <button
-                                                            onClick={() => handleEditDrug(drug.id)}
-                                                            className="inline-flex items-center px-3 py-1 text-sm text-green-600 hover:text-green-800 border border-green-300 rounded hover:bg-green-50 transition-colors"
-                                                            title="Edit Drug"
-                                                        >
-                                                            <Edit className="w-4 h-4 mr-1" />
-                                                            Edit
-                                                        </button>
                                                         <button
                                                             onClick={() => handleDeleteDrug(drug)}
                                                             className="inline-flex items-center px-3 py-1 text-sm text-red-600 hover:text-red-800 border border-red-300 rounded hover:bg-red-50 transition-colors"
@@ -288,15 +318,14 @@ const Drugs = () => {
                                                         >
                                                             <Trash2 className="w-4 h-4 mr-1" />
                                                             Delete
-                                                        </button> */}
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
-
+                                            <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
                                                 {searchTerm ? 'No drugs found matching your search.' : 'No drugs registered yet.'}
                                             </td>
                                         </tr>
@@ -328,7 +357,7 @@ const Drugs = () => {
                                         </label>
                                         <input type="text" id="drugName"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            required />
+                                            required disabled={submitting} />
                                     </div>
 
                                     <div>
@@ -337,15 +366,15 @@ const Drugs = () => {
                                         </label>
                                         <select id="category"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            required>
+                                            required disabled={submitting}>
                                             <option value="">Select category</option>
-                                            <option value="Antibiotic">Antibiotic</option>
-                                            <option value="Analgesic">Pain Killer</option>
-                                            <option value="Antiviral">Antiviral</option>
-                                            <option value="Antidiabetic">Antidiabetic</option>
-                                            <option value="Antihistamine">Antihistamine</option>
-                                            <option value="Antihypertensive">Antihypertensive</option>
-                                            <option value="Sedative">Sedative</option>
+                                            <option value="antibiotic">Antibiotic</option>
+                                            <option value="analgesic">Pain Killer</option>
+                                            <option value="antiviral">Antiviral</option>
+                                            <option value="antidiabetic">Antidiabetic</option>
+                                            <option value="antihistamine">Antihistamine</option>
+                                            <option value="antihypertensive">Antihypertensive</option>
+                                            <option value="sedative">Sedative</option>
                                         </select>
                                     </div>
 
@@ -355,14 +384,14 @@ const Drugs = () => {
                                         </label>
                                         <select id="dosageForm"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            required>
+                                            required disabled={submitting}>
                                             <option value="">Select dosage form</option>
-                                            <option value="Tablet">Tablet</option>
-                                            <option value="Capsule">Capsule</option>
-                                            <option value="Syrup">Syrup</option>
-                                            <option value="Injection">Injection</option>
-                                            <option value="Cream">Cream</option>
-                                            <option value="Ointment">Ointment</option>
+                                            <option value="tablet">Tablet</option>
+                                            <option value="capsule">Capsule</option>
+                                            <option value="syrup">Syrup</option>
+                                            <option value="injection">Injection</option>
+                                            <option value="cream">Cream</option>
+                                            <option value="ointment">Ointment</option>
                                         </select>
                                     </div>
 
@@ -372,7 +401,7 @@ const Drugs = () => {
                                         </label>
                                         <input type="text" id="strength" placeholder="e.g. BTC202579"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            required />
+                                            required disabled={submitting} />
                                     </div>
 
                                     <div>
@@ -382,7 +411,7 @@ const Drugs = () => {
                                         </label>
                                         <input type="date" id="manufactureDate"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            required />
+                                            required disabled={submitting} />
                                     </div>
 
                                     <div>
@@ -391,18 +420,8 @@ const Drugs = () => {
                                         </label>
                                         <input type="date" id="expiryDate"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            required />
+                                            required disabled={submitting} />
                                     </div>
-
-                                    {/* <div>
-                                        <label htmlFor="manufacturer"
-                                            className="block text-sm font-medium text-gray-700 mb-1">
-                                            Manufacturer *
-                                        </label>
-                                        <input type="text" id="manufacturer"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            required />
-                                    </div> */}
 
                                     <div>
                                         <label htmlFor="countryOfOrigin"
@@ -411,7 +430,7 @@ const Drugs = () => {
                                         </label>
                                         <input type="text" id="countryOfOrigin"
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            required />
+                                            required disabled={submitting} />
                                     </div>
 
                                     <div className="md:col-span-2">
@@ -421,19 +440,22 @@ const Drugs = () => {
                                         </label>
                                         <textarea id="description" rows="3"
                                             placeholder="Describe the drug..."
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            disabled={submitting}></textarea>
                                     </div>
                                 </div>
 
                                 <div className="mt-8 flex justify-end space-x-3">
                                     <button type="button"
                                         onClick={toggleRegistrationForm}
-                                        className="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                                        disabled={submitting}
+                                        className="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50">
                                         Cancel
                                     </button>
                                     <button type="submit"
-                                        className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors">
-                                        Register Drug
+                                        disabled={submitting}
+                                        className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors disabled:opacity-50">
+                                        {submitting ? 'Registering...' : 'Register Drug'}
                                     </button>
                                 </div>
                             </form>
