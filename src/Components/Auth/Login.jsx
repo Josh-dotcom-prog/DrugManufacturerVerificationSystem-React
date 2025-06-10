@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../../utils/axios'; // Adjust the import path as necessary
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -7,6 +8,8 @@ const Login = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+
+
 
     const validateForm = () => {
         const newErrors = {};
@@ -29,15 +32,39 @@ const Login = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (validateForm()) {
-            // In a real app, you'd call an API here to authenticate
-            console.log('Login attempt with:', { email, password, rememberMe });
+            const form = new FormData();
+            form.append('username', email);
+            form.append('password', password);
 
-            // If authentication is successful, navigate to dashboard
-            navigate('/manufacturersdashboard');
+            try {
+                const response = await api.post('/auth/login', form,
+                    {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Accept': 'application/json',
+                        }
+                    }
+
+
+                );
+
+                const { access_token } = response.data;
+
+                // Save the token to localStorage
+                localStorage.setItem('token', access_token);
+
+                // Navigate to dashboard
+                navigate('/manufacturersdashboard');
+            } catch (error) {
+                console.error('Login failed:', error.response?.data || error.message);
+                alert('Invalid credentials or server error');
+            }
         }
     };
 

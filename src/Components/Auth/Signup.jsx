@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import api from '../../utils/axios'; // Adjust the import path as necessary
+
 
 const Signup = () => {
     const [formData, setFormData] = useState({
@@ -110,20 +112,20 @@ const Signup = () => {
 
     // Handle input changes
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        const newValue = type === 'checkbox' ? checked : value;
+        const { name, value, type, checked, files } = e.target;
+        const newValue = type === 'checkbox' ? checked : type === 'file' ? files[0] : value;
 
         setFormData(prevData => ({
             ...prevData,
             [name]: newValue
         }));
 
-        // Clear error when user starts typing
         setErrors(prevErrors => ({
             ...prevErrors,
             [name]: ''
         }));
     };
+
 
     // Validate on blur
     const handleBlur = (e) => {
@@ -158,16 +160,40 @@ const Signup = () => {
     };
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (validateForm()) {
-            // Form is valid, proceed with submission
-            console.log('Signup attempt with:', formData);
-            // Here you would typically call an API to register the user
-            alert('Form submitted successfully!');
-        } else {
+        if (!validateForm()) {
             console.log('Form has errors. Please correct them.');
+            return;
+        }
+
+        const form = new FormData();
+        form.append('name', formData.manufacturerName);
+        form.append('license_number', formData.licenseNumber);
+        form.append('email', formData.email);
+        form.append('phone_number', formData.phone);
+        form.append('stresst_address', formData.Address);
+        form.append('certificate', formData.License); // the uploaded file
+        form.append('password', formData.password);
+
+        console.log("hello, this is the form data", form);
+
+        try {
+            const response = await api.post('/users/create', form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data' // because you're uploading a file
+                }
+            });
+            console.log('Success:', response.data);
+            alert('Account created! Await verification.');
+        } catch (error) {
+            if (error.response) {
+                console.error('API Error:', error.response.data);
+                alert('Signup failed: ' + errors || 'Check the form');
+            } else {
+                console.error('Network Error:', error.message);
+            }
         }
     };
 
