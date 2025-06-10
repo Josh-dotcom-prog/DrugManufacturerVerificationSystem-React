@@ -1,41 +1,62 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../../utils/axios';
 
 const Approvals = () => {
+    const [manufacturers, setManufacturers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
-    const handleViewManufacturer = (manufacturerId) => {
-        // Navigate to manufacturer details page with ID
-        navigate(`/manufacturerdetails/`);
-    };
-    return (
+    useEffect(() => {
+        // Fetch manufacturers data from backend
+        api
+            .get('http://0.0.0.0:8000/admin/approvals')
+            .then((response) => {
+                // Get only pending manufacturers from the response
+                setManufacturers(response.data.pending || []);
+            })
+            .catch((error) => {
+                console.error('Error fetching manufacturers:', error);
+            });
+    }, []);
 
-        <div class="flex h-screen overflow-hidden">
-            {/* <!-- Sidebar navigation --> */}
-            <div class="w-64 border-r border-gray-200 bg-white">
-                <div class="p-4 border-b border-gray-200">
-                    <div class="flex items-center justify-between">
-                        <h1 class="text-xl font-bold">DMVS Admin</h1>
+    const handleViewManufacturer = (id) => {
+        // Navigate to manufacturer details page with ID
+        navigate(`/manufacturerdetails/${id}`);
+    };
+
+    // Filter manufacturers based on search term
+    const filteredManufacturers = manufacturers.filter((m) =>
+        m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        m.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <div className="flex h-screen overflow-hidden">
+            {/* Sidebar navigation */}
+            <div className="w-64 border-r border-gray-200 bg-white">
+                <div className="p-4 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                        <h1 className="text-xl font-bold">DMVS Admin</h1>
                     </div>
                 </div>
-                <div class="p-4">
+                <div className="p-4">
                     <ul>
-                        <li class="mb-2">
-                            <a href="/admindashboard" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded">
-                                <i class="fas fa-th-large mr-3 text-gray-500"></i>
+                        <li className="mb-2">
+                            <a href="/admindashboard" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded">
+                                <i className="fas fa-th-large mr-3 text-gray-500"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="mb-2">
-                            <a href="/manufacturertable" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded">
-                                <i class="fas fa-users mr-3 text-gray-500"></i>
+                        <li className="mb-2">
+                            <a href="/manufacturertable" className="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded">
+                                <i className="fas fa-users mr-3 text-gray-500"></i>
                                 <span>Manufacturers</span>
                             </a>
                         </li>
-                        <li class="mb-2">
-                            <a href="/approvals" class="flex items-center px-4 py-3 text-gray-600 bg-gray-100 rounded">
-                                <i class="fas fa-check-circle mr-3 text-gray-500"></i>
+                        <li className="mb-2">
+                            <a href="/approvals" className="flex items-center px-4 py-3 text-gray-600 bg-gray-100 rounded">
+                                <i className="fas fa-check-circle mr-3 text-gray-500"></i>
                                 <span>Approvals</span>
                             </a>
                         </li>
@@ -43,90 +64,84 @@ const Approvals = () => {
                 </div>
             </div>
 
-            {/* <!-- Main content --> */}
-            <div class="flex-1 overflow-y-auto">
-                <header class="bg-white shadow-sm">
-                    <div class="flex justify-end items-center p-4">
-                        <div class="relative">
-                            <button class="p-1 rounded-full text-gray-400 hover:bg-gray-100 focus:outline-none mr-4">
-                                <i class="fas fa-bell text-gray-600"></i>
+            {/* Main content */}
+            <div className="flex-1 overflow-y-auto">
+                <header className="bg-white shadow-sm">
+                    <div className="flex justify-end items-center p-4">
+                        <div className="relative">
+                            <button className="p-1 rounded-full text-gray-400 hover:bg-gray-100 focus:outline-none mr-4">
+                                <i className="fas fa-bell text-gray-600"></i>
                             </button>
                         </div>
-                        <div class="flex items-center">
-                            <button class="h-8 w-8 rounded-full bg-gray-800 flex items-center justify-center text-white">
+                        <div className="flex items-center">
+                            <button className="h-8 w-8 rounded-full bg-gray-800 flex items-center justify-center text-white">
                                 AD
                             </button>
                         </div>
                     </div>
                 </header>
 
-                <main class="p-6">
-                    {/* <!-- Dashboard header --> */}
-                    <div class="mb-6">
-                        <h1 class="text-2xl font-bold text-gray-900">Approvals</h1>
-                        <p class="text-gray-600">Review and manage pending manufacturer approval requests</p>
+                <main className="p-6">
+                    {/* Dashboard header */}
+                    <div className="mb-6">
+                        <h1 className="text-2xl font-bold text-gray-900">Approvals</h1>
+                        <p className="text-gray-600">Review and manage pending manufacturer approval requests</p>
                     </div>
 
-                    {/* <!-- Manufacturers Table Section --> */}
-                    <div id="productsSection" class="mb-8 bg-white rounded-lg shadow-sm overflow-hidden p-6">
-                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                            <div class="flex bg-gray-100 px-3 py-2 rounded-md">
-                                <i class="fas fa-search text-gray-400 mr-2 mt-1"></i>
-                                <input type="text" placeholder="Search manufacturer..."
-                                    class="bg-transparent border-none focus:outline-none text-sm" />
+                    {/* Manufacturers Table Section */}
+                    <div id="productsSection" className="mb-8 bg-white rounded-lg shadow-sm overflow-hidden p-6">
+                        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <div className="flex bg-gray-100 px-3 py-2 rounded-md">
+                                <i className="fas fa-search text-gray-400 mr-2 mt-1"></i>
+                                <input
+                                    type="text"
+                                    placeholder="Search manufacturer..."
+                                    className="bg-transparent border-none focus:outline-none text-sm"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
                             </div>
                         </div>
 
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200">
                                 <thead>
-                                    <tr class="bg-gray-50">
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Manufacturer Name</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Email Address</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Address</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Registration Date</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions</th>
+                                    <tr className="bg-gray-50">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manufacturer Name</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email Address</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">MediCorp Industries</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">info@medicorp.com</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">London, UK</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">6/22/2023</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex space-x-2">
-                                                <button onClick={() => handleViewManufacturer()} class="text-gray-500 hover:text-gray-700 border border-gray-300 rounded px-2 py-1">
-                                                    <i class="fas fa-eye mr-2"></i>
-                                                    View
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">PharmaTech Solutions</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">contact@pharmatech.com</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">Paris, France</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">9/18/2023</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex space-x-2">
-                                                <button onClick={() => handleViewManufacturer()} class="text-gray-500 hover:text-gray-700 border border-gray-300 rounded px-2 py-1">
-                                                    <i class="fas fa-eye mr-2"></i>
-                                                    View
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {filteredManufacturers.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="5" className="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                                                No pending manufacturers found.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        filteredManufacturers.map((manufacturer) => (
+                                            <tr key={manufacturer.id}>
+                                                <td className="px-6 py-4 whitespace-nowrap">{manufacturer.name}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">{manufacturer.email}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">{manufacturer.address}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">{manufacturer.mobile}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="flex space-x-2">
+                                                        <button
+                                                            onClick={() => handleViewManufacturer(manufacturer.id)}
+                                                            className="text-gray-500 hover:text-gray-700 border border-gray-300 rounded px-2 py-1"
+                                                        >
+                                                            <i className="fas fa-eye mr-2"></i>
+                                                            View
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -134,7 +149,7 @@ const Approvals = () => {
                 </main>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Approvals;

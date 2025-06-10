@@ -1,50 +1,72 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Download, Check, X, FileText, Eye } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Check, X, FileText, Eye } from 'lucide-react';
+import api from '../../utils/axios';
 
 const ManufacturerDetails = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    const [manufacturer, setManufacturer] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [showApprovalModal, setShowApprovalModal] = useState(false);
     const [showRejectionModal, setShowRejectionModal] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState('');
 
-    // Sample manufacturer data - in real app this would come from props or API
-    const manufacturer = {
-        name: "MediCorp Industries",
-        contact: "Dr. Sarah Johnson",
-        email: "info@medicorp.com",
-        address: "123 Medical Drive, London, UK, SW1A 1AA",
-        registrationDate: "6/22/2023",
-        certificateUrl: "/api/placeholder/400/300", // Placeholder for PDF
-        certificateName: "Certificate_of_Operation_MediCorp.pdf"
-    };
+    // Fetch manufacturer details on mount
+    useEffect(() => {
+        async function fetchManufacturer() {
+            try {
+                const response = await api.get(`/manufacturers/${id}`); // Adjust endpoint as per your backend
+                setManufacturer(response.data);
+                setLoading(false);
+            } catch (err) {
+                setError('Failed to load manufacturer data.');
+                setLoading(false);
+            }
+        }
+        fetchManufacturer();
+    }, [id]);
 
-    const handleApprove = () => {
-        setShowApprovalModal(false);
-        // Handle approval logic here
-        console.log("Manufacturer approved");
-    };
-
-    const handleReject = () => {
-        if (rejectionReason.trim()) {
-            setShowRejectionModal(false);
-            // Handle rejection logic here
-            console.log("Manufacturer rejected");
+    const handleApprove = async () => {
+        try {
+            await api.post(`/manufacturers/${id}/approve`); // Adjust endpoint and method
+            alert('Manufacturer approved successfully!');
+            navigate('/approvals');
+        } catch (err) {
+            alert('Failed to approve manufacturer.');
+        } finally {
+            setShowApprovalModal(false);
         }
     };
 
-    const handleDownloadCertificate = () => {
-        // Handle PDF download
-        console.log("Downloading certificate");
+    const handleReject = async () => {
+        if (!rejectionReason.trim()) {
+            alert('Please provide a rejection reason.');
+            return;
+        }
+        try {
+            await api.post(`/manufacturers/${id}/reject`, { reason: rejectionReason }); // Adjust endpoint
+            alert('Manufacturer rejected successfully!');
+            navigate('/approvals');
+        } catch (err) {
+            alert('Failed to reject manufacturer.');
+        } finally {
+            setShowRejectionModal(false);
+        }
     };
+
+    if (loading) return <div className="p-6">Loading...</div>;
+    if (error) return <div className="p-6 text-red-600">{error}</div>;
 
     return (
         <div className="flex h-screen overflow-hidden">
-            {/* Main content */}
             <div className="flex-1 overflow-y-auto">
-
                 <main className="p-6">
-                    {/* Back button and header */}
                     <div className="mb-6">
                         <button
-                            onClick={() => window.history.back()}
+                            onClick={() => navigate('/approvals')}
                             className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -54,53 +76,34 @@ const ManufacturerDetails = () => {
                         <p className="text-gray-600">Review manufacturer information and application documents</p>
                     </div>
 
-                    {/* Manufacturer Details Card */}
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Left Column */}
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Manufacturer Name
-                                    </label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Manufacturer Name</label>
                                     <p className="text-gray-900 font-semibold">{manufacturer.name}</p>
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Contact Person
-                                    </label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
                                     <p className="text-gray-900">{manufacturer.contact}</p>
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Email Address
-                                    </label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                                     <p className="text-gray-900">{manufacturer.email}</p>
                                 </div>
                             </div>
-
-                            {/* Right Column */}
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Address
-                                    </label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                                     <p className="text-gray-900">{manufacturer.address}</p>
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Registration Date
-                                    </label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Registration Date</label>
                                     <p className="text-gray-900">{manufacturer.registrationDate}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    {/* Certificate Section */}
 
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Certificate of Operation</h3>
@@ -122,8 +125,6 @@ const ManufacturerDetails = () => {
                         </div>
                     </div>
 
-
-                    {/* Action Buttons */}
                     <div className="flex justify-end space-x-4">
                         <button
                             onClick={() => setShowRejectionModal(true)}
@@ -143,7 +144,7 @@ const ManufacturerDetails = () => {
                 </main>
             </div>
 
-            {/* Approval Confirmation Modal */}
+            {/* Approval Modal */}
             {showApprovalModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-lg p-6 max-w-md w-full">
@@ -186,14 +187,20 @@ const ManufacturerDetails = () => {
                             <h3 className="text-lg font-semibold text-gray-900">Reject Application</h3>
                         </div>
                         <p className="text-gray-600 mb-4">
-                            Are you sure you want to Reject <strong>{manufacturer.name}</strong>'s application?
+                            Are you sure you want to reject <strong>{manufacturer.name}</strong>'s application?
                         </p>
+
+                        <textarea
+                            className="w-full p-2 border border-gray-300 rounded mb-4"
+                            rows="4"
+                            placeholder="Enter rejection reason"
+                            value={rejectionReason}
+                            onChange={(e) => setRejectionReason(e.target.value)}
+                        />
 
                         <div className="flex justify-end space-x-3">
                             <button
-                                onClick={() => {
-                                    setShowRejectionModal(false);
-                                }}
+                                onClick={() => setShowRejectionModal(false)}
                                 className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
                             >
                                 Cancel
@@ -201,6 +208,7 @@ const ManufacturerDetails = () => {
                             <button
                                 onClick={handleReject}
                                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                disabled={!rejectionReason.trim()}
                             >
                                 Reject Application
                             </button>
