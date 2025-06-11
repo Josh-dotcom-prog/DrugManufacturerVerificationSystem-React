@@ -18,7 +18,7 @@ const ManufacturerDetails = () => {
     useEffect(() => {
         async function fetchManufacturer() {
             try {
-                const response = await api.get(`/manufacturers/${id}`); // Adjust endpoint as per your backend
+                const response = await api.get(`/admin/user?manufacturer_id=${id}`); // Adjust endpoint as per your backend
                 setManufacturer(response.data);
                 setLoading(false);
             } catch (err) {

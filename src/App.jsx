@@ -43,7 +43,7 @@ const App = () => {
           <Route path="approvals" element={<Approvals />} />
           <Route path="/qrcode" element={<DrugQRCode />} />
           <Route path="/verification" element={<DrugVerification />} />
-          <Route path="/manufacturerdetails" element={<ManufacturerDetails />} />
+          <Route path="/manufacturerdetails/:id" element={<ManufacturerDetails />} />
           <Route path="/drugdetails/:id" element={<DrugDetails />} />
           <Route path="/activation" element={<Activation />} />
           {/* Catch-all route */}

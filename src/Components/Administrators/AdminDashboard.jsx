@@ -77,7 +77,7 @@ const AdminDashboard = () => {
                             </a>
                         </li>
                         <li className="mb-2">
-                            <a href="/approval" className="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded">
+                            <a href="/approvals" className="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded">
                                 <i className="fas fa-check-circle mr-3 text-gray-500"></i>
                                 <span>Approvals</span>
                             </a>

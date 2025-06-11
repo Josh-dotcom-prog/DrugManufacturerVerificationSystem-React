@@ -1,29 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../utils/axios';
+
+// I corrected this file: paul747 -> ebilpaul
 
 const AccountActivationSuccess = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [activationStatus, setActivationStatus] = useState(null); // 'success' | 'error'
+
+
+    useEffect(() => {
+        const activateAccount = async () => {
+            const search = window.location.search || window.location.hash.split('?')[1] || '';
+            const params = new URLSearchParams(search);
+            const token = params.get('token');
+            const email = params.get('email');
+
+            if (!token || !email) {
+                setActivationStatus('error');
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const response = await api.post('/users/verify', { email, token });
+
+                console.log("Response Data", response.data);
+                console.log("Response Status", response.status);
+                console.log("Response Success", response.data.success);
+
+                if (response.status === 200) {
+                    setActivationStatus('success');
+                } else {
+                    setActivationStatus('error');
+                }
+            } catch (error) {
+                console.error('Activation failed:', error.response?.data || error.message);
+                setActivationStatus('error');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        activateAccount();
+    }, []);
+
 
     const handleDashboardClick = () => {
         setIsLoading(true);
-        // Simulate navigation - replace with your actual navigation logic
         setTimeout(() => {
-            console.log('Navigating to dashboard...');
-            window.location.href = '/manufacturersdashboard';
+            window.location.href = '/login';
             setIsLoading(false);
         }, 1000);
     };
 
-
     const handleHelpClick = () => {
         console.log('Navigating to help center...');
-        // window.location.href = '/help';
     };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <p>Loading...</p>
+            </div>
+        );
+    }
+
+    if (activationStatus === 'error') {
+        return (
+            <div className="min-h-screen flex items-center justify-center p-5">
+                <div className="bg-white rounded-3xl p-12 shadow-2xl max-w-lg w-full text-center">
+                    <h1 className="text-3xl font-bold text-red-600 mb-4">Activation Failed</h1>
+                    <p className="text-gray-700 mb-8">The link is invalid or has expired.</p>
+                    <button
+                        onClick={handleDashboardClick}
+                        className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center p-5">
-            <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-12 text-center shadow-2xl max-w-lg w-full relative ">
+            <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-12 text-center shadow-2xl max-w-lg w-full relative">
+                {/* Success Icon */}
                 <div className="animate-[fadeInUp_0.8s_ease-out]">
-                    {/* Success Icon */}
                     <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-8 animate-[bounceIn_1s_ease-out]">
                         <svg
                             className="w-10 h-10 text-white animate-[checkDraw_0.8s_ease-out_0.3s_both]"
@@ -40,33 +103,11 @@ const AccountActivationSuccess = () => {
                         </svg>
                     </div>
 
-                    {/* Main Title */}
-                    <h1 className="text-4xl font-bold text-gray-800 mb-4">
-                        Account Activated!
-                    </h1>
+                    <h1 className="text-4xl font-bold text-gray-800 mb-4">Account Activated!</h1>
 
-                    {/* Subtitle */}
                     <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                        Welcome aboard! Your account has been successfully activated and you're ready to get started.
+                        Welcome aboard! Your account has been successfully activated , only approval left and you will be ready to get started.
                     </p>
-
-                    {/* Success Details */}
-                    <div className="bg-gray-50 rounded-2xl p-6 mb-8 border-l-4 border-green-500">
-                        <h3 className="text-xl font-semibold text-gray-800 mb-4">What's Next?</h3>
-                        <div className="space-y-3 text-left">
-                            {[
-                                'Open your dashboard',
-                                'Register your drugs and Generate QR codes',
-                                'Manage your drugs',
-                                'Stay updated with notifications',
-                            ].map((item, index) => (
-                                <div key={index} className="flex items-center space-x-3">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                                    <span className="text-gray-700">{item}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
 
                     {/* Action Buttons */}
                     <div className="space-y-4">
@@ -84,62 +125,12 @@ const AccountActivationSuccess = () => {
                                     <span>Loading...</span>
                                 </div>
                             ) : (
-                                'Go to Dashboard'
+                                'Go to Login'
                             )}
                         </button>
-
                     </div>
                 </div>
-
-                {/* Celebration Effects */}
-                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
-                    <div className="absolute top-4 left-4 w-2 h-2 bg-yellow-400 rounded-full animate-ping" />
-                    <div className="absolute top-8 right-6 w-1 h-1 bg-pink-400 rounded-full animate-pulse" />
-                    <div className="absolute bottom-6 left-8 w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" />
-                    <div className="absolute bottom-4 right-4 w-1 h-1 bg-green-400 rounded-full animate-ping" />
-                </div>
             </div>
-
-            {/* Floating particles for visual effect */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                {[
-                    { top: '25%', left: '25%', size: 'w-2 h-2', animation: 'animate-pulse' },
-                    { top: '33%', right: '25%', size: 'w-1 h-1', animation: 'animate-bounce' },
-                    { bottom: '25%', left: '33%', size: 'w-1.5 h-1.5', animation: 'animate-ping' },
-                    { bottom: '33%', right: '33%', size: 'w-1 h-1', animation: 'animate-pulse' }
-                ].map((particle, index) => (
-                    <div
-                        key={index}
-                        className={`absolute ${particle.size} bg-white/20 rounded-full ${particle.animation}`}
-                        style={{
-                            top: particle.top,
-                            left: particle.left,
-                            right: particle.right,
-                            bottom: particle.bottom
-                        }}
-                    />
-                ))}
-            </div>
-
-            {/* Custom CSS for animations */}
-            <style jsx>{`
-        @keyframes fadeInUp {
-          0% { opacity: 0; transform: translateY(30px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes bounceIn {
-          0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
-          40%, 43% { transform: translate3d(0, -15px, 0); }
-          70% { transform: translate3d(0, -7px, 0); }
-          90% { transform: translate3d(0, -2px, 0); }
-        }
-        
-        @keyframes checkDraw {
-          0% { stroke-dasharray: 0, 100; }
-          100% { stroke-dasharray: 100, 0; }
-        }
-      `}</style>
         </div>
     );
 };

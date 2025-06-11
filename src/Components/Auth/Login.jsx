@@ -43,30 +43,43 @@ const Login = () => {
             form.append('password', password);
 
             try {
-                const response = await api.post('/auth/login', form,
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'Accept': 'application/json',
-                        }
+                const response = await api.post('/auth/login', form, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json',
                     }
+                });
 
+                const { access_token, user_role } = response.data;
 
-                );
-
-                const { access_token } = response.data;
-
-                // Save the token to localStorage
+                // Save token and optionally user role in localStorage
                 localStorage.setItem('token', access_token);
+                localStorage.setItem('role', user_role); // optional, if needed elsewhere
 
-                // Navigate to dashboard
-                navigate('/manufacturersdashboard');
+
+                // console.log('user role:', user_role);
+                const userRole = localStorage.getItem('role');
+                const token = localStorage.getItem('token');
+                console.log('token:', token);
+                console.log('user role:', userRole);
+
+
+                // Navigate based on user role
+                if (user_role === 'manufacturer') {
+                    navigate('/manufacturersdashboard');
+                } else if (user_role === 'admin') {
+                    navigate('/adminDashboard');
+                } else {
+                    // Default fallback route
+                    navigate('/');
+                }
             } catch (error) {
                 console.error('Login failed:', error.response?.data || error.message);
                 alert('Invalid credentials or server error');
             }
         }
     };
+
 
     return (
         <main className="container mx-auto px-4 py-8">

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../utils/axios';
+// If using React Router
+// import { Link } from 'react-router-dom';
 
 const ManufacturersDashboard = () => {
     const [stats, setStats] = useState({ total: 0, active_count: 0, expired_count: 0 });
@@ -7,6 +9,9 @@ const ManufacturersDashboard = () => {
     const [expiredDrugs, setExpiredDrugs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [isNewManufacturer, setIsNewManufacturer] = useState(false);
+    const [manufacturerName, setManufacturerName] = useState('');
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -21,28 +26,35 @@ const ManufacturersDashboard = () => {
                 // 1. Fetch dashboard stats
                 const dashboardRes = await api.get('/drug/dashboard', { headers });
                 const dashboardData = dashboardRes.data;
+                setManufacturerName(dashboardData.name);
                 console.log('Fetched Dashboard Data:', dashboardData);
 
-                // Set stats from dashboard response
+                if (dashboardData.total === 0) {
+                    setIsNewManufacturer(true);
+                    setStats({ total: 0, active_count: 0, expired_count: 0 });
+                    setActiveDrugs([]);
+                    setExpiredDrugs([]);
+                    setLoading(false);
+                    return;
+                }
+
                 setStats({
                     total: dashboardData.total,
                     active_count: dashboardData.active_count,
                     expired_count: dashboardData.expired_count
                 });
 
-                // 2. Fetch all drugs to get detailed information
+                // 2. Fetch all drugs
                 const drugsRes = await api.get('/drug/drugs', { headers });
                 const allDrugs = drugsRes.data;
                 console.log('Fetched All Drugs:', allDrugs);
 
-                // Function to check if drug is expired
                 const isExpired = (expiryDate) => {
                     const today = new Date();
                     const expiry = new Date(expiryDate);
                     return expiry < today;
                 };
 
-                // Separate drugs into active and expired based on expiry date
                 const activeDrugs = allDrugs.filter(drug => !isExpired(drug.expiry_date));
                 const expiredDrugs = allDrugs.filter(drug => isExpired(drug.expiry_date));
 
@@ -52,8 +64,8 @@ const ManufacturersDashboard = () => {
                 setLoading(false);
             } catch (err) {
                 console.error(err);
-                // setError('Manufacturer does not have any drugs registered in the system.');
-                // setLoading(false);
+                setError('Manufacturer does not have any drugs registered in the system.');
+                setLoading(false);
             }
         };
 
@@ -91,24 +103,47 @@ const ManufacturersDashboard = () => {
                     <h1 className="text-2xl font-bold text-gray-800">Manufacturer Dashboard</h1>
                     <div className="flex items-center">
                         <span className="mr-4">
-                            Welcome, <strong className="text-green-600">Pharma</strong>
+                            Welcome, <strong className="text-green-600">{manufacturerName || 'Manufacturer'}</strong>
                         </span>
+
                         <a href="/login" className="bg-white text-green-800 px-4 py-2 rounded-md font-medium hover:bg-green-100">Logout</a>
                     </div>
                 </div>
 
-                {/* Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 p-6">
-                    <StatCard title="TOTAL DRUGS" count={stats.total} color="yellow" icon="fas fa-capsules" />
-                    <StatCard title="ACTIVE DRUGS" count={stats.active_count} color="green" icon="fas fa-boxes" />
-                    <StatCard title="EXPIRED DRUGS" count={stats.expired_count} color="red" icon="fas fa-capsules" />
-                </div>
+                {isNewManufacturer ? (
+                    <div className="p-6 flex flex-col items-center justify-center text-center">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome to DMVS 👋</h2>
+                        <p className="text-gray-600 mb-4">
+                            You haven't registered any drugs yet. Once you do, they'll appear here on your dashboard.
+                        </p>
+                        <a
+                            href="/drugs/create"
+                            className="bg-green-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition"
+                        >
+                            Register Your First Drug
+                        </a>
+                        {/* If using React Router, use:
+                        <Link to="/drugs/create" className="bg-green-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition">
+                            Register Your First Drug
+                        </Link>
+                        */}
+                    </div>
+                ) : (
+                    <>
+                        {/* Stats */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 p-6">
+                            <StatCard title="TOTAL DRUGS" count={stats.total} color="yellow" icon="fas fa-capsules" />
+                            <StatCard title="ACTIVE DRUGS" count={stats.active_count} color="green" icon="fas fa-boxes" />
+                            <StatCard title="EXPIRED DRUGS" count={stats.expired_count} color="red" icon="fas fa-capsules" />
+                        </div>
 
-                {/* Tables */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 pb-6">
-                    <DrugTable title="Expired Drugs" description="Expired Drugs in the System" drugs={expiredDrugs} status="expired" />
-                    <DrugTable title="Active Drugs" description="Active Drugs in the System" drugs={activeDrugs} status="active" />
-                </div>
+                        {/* Tables */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 pb-6">
+                            <DrugTable title="Expired Drugs" description="Expired Drugs in the System" drugs={expiredDrugs} status="expired" />
+                            <DrugTable title="Active Drugs" description="Active Drugs in the System" drugs={activeDrugs} status="active" />
+                        </div>
+                    </>
+                )}
             </main>
         </div>
     );
@@ -161,15 +196,10 @@ const DrugTable = ({ title, description, drugs, status }) => (
                                 </div>
                             </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                            {drug.batch_number}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                            {new Date(drug.expiry_date).toLocaleDateString()}
-                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{drug.batch_number}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{new Date(drug.expiry_date).toLocaleDateString()}</td>
                         <td className="px-6 py-4 text-right">
-                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${status === 'expired' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                                }`}>
+                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${status === 'expired' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
                                 {status.charAt(0).toUpperCase() + status.slice(1)}
                             </span>
                         </td>
