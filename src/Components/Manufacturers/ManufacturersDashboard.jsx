@@ -52,8 +52,8 @@ const ManufacturersDashboard = () => {
                 setLoading(false);
             } catch (err) {
                 console.error(err);
-                setError('Failed to load dashboard data.');
-                setLoading(false);
+                // setError('Manufacturer does not have any drugs registered in the system.');
+                // setLoading(false);
             }
         };
 

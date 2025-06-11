@@ -17,6 +17,7 @@ import DrugQRCode from "./Components/Manufacturers/DrugQRCode";
 import DrugVerification from "./Components/Drug Verification/DrugVerification";
 import ManufacturerDetails from "./Components/Administrators/ManufacturerDetails";
 import DrugDetails from "./Components/Manufacturers/DrugDetails";
+import Activation from "./Components/Manufacturers/Activation";
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/verification" element={<DrugVerification />} />
           <Route path="/manufacturerdetails" element={<ManufacturerDetails />} />
           <Route path="/drugdetails/:id" element={<DrugDetails />} />
+          <Route path="/activation" element={<Activation />} />
           {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
