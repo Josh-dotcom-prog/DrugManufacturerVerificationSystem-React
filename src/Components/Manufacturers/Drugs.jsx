@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, Edit, Trash2, Search, Plus, X } from 'lucide-react';
 import api from '../../utils/axios';
 
+
 const Drugs = () => {
     const [showRegistrationForm, setShowRegistrationForm] = useState(false);
     const [drugData, setDrugData] = useState(null);
@@ -101,6 +102,7 @@ const Drugs = () => {
             };
 
             console.log('Submitting drug data:', formData);
+            localStorage.setItem('drugData', formData);
 
             // Submit to API
             const response = await api.post('/drug/create', formData, { headers });

@@ -13,7 +13,7 @@ const Signup = () => {
         License: '',
         password: '',
         confirmPassword: '',
-        termsAccepted: false
+        // termsAccepted: false
     });
 
     const [errors, setErrors] = useState({
@@ -25,7 +25,7 @@ const Signup = () => {
         License: '',
         password: '',
         confirmPassword: '',
-        termsAccepted: ''
+        // termsAccepted: ''
     });
 
     // Validate a single field
@@ -94,12 +94,6 @@ const Signup = () => {
                     errorMessage = 'Please confirm your password';
                 } else if (value !== formData.password) {
                     errorMessage = 'Passwords do not match';
-                }
-                break;
-
-            case 'termsAccepted':
-                if (!value) {
-                    errorMessage = 'You must accept the terms and conditions';
                 }
                 break;
 
@@ -338,7 +332,7 @@ const Signup = () => {
                             </div>
                         </div>
 
-                        <div className="mb-6">
+                        {/* <div className="mb-6">
                             <div className="flex items-start">
                                 <input
                                     type="checkbox"
@@ -355,7 +349,7 @@ const Signup = () => {
                                 </label>
                             </div>
                             {errors.termsAccepted && <p className="text-red-500 text-sm mt-1">{errors.termsAccepted}</p>}
-                        </div>
+                        </div> */}
 
                         <button
                             type="submit"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import ResultSection from './ResultSection';
 import { useLocation } from 'react-router-dom';
+import api from '../../utils/axios';
+import ResultSection from './ResultSection';
 
 const DrugVerification = () => {
     const [drugData, setDrugData] = useState(null);
@@ -8,25 +9,40 @@ const DrugVerification = () => {
     const [error, setError] = useState(null);
     const location = useLocation();
 
-    useEffect(() => {
-        // Extract data from URL query parameters or other sources
-        const getData = () => {
-            try {
-                // Check if data is in URL query
-                const queryParams = new URLSearchParams(location.search);
-                const qrData = queryParams.get('data');
+    const verifyDrugWithBackend = async (params) => {
+        try {
+            setLoading(true);
+            const response = await api.get('/drug/verify', { params });
+            return response.data;
+        } catch (error) {
+            console.error('Verification error:', error);
+            setError(error.response?.data?.message || 'Failed to verify drug. Please try again.');
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
 
-                if (qrData) {
-                    const parsedData = JSON.parse(decodeURIComponent(qrData));
-                    return parsedData;
+    useEffect(() => {
+        const getData = async () => {
+            try {
+                const queryParams = new URLSearchParams(location.search);
+                const drugName = queryParams.get('drug_name');
+
+                if (drugName) {
+                    const verificationResult = await verifyDrugWithBackend({
+                        drug_name: drugName,
+                        batch_number: queryParams.get('batch_number'),
+                        manufacturer: queryParams.get('manufacturer'),
+                        strength: queryParams.get('strength')
+                    });
+                    return verificationResult;
                 }
 
-                // Check if data is in location state (for internal navigation)
                 if (location.state && location.state.drugData) {
                     return location.state.drugData;
                 }
 
-                // No data found
                 setError('No drug data provided');
                 return null;
             } catch (err) {
@@ -36,17 +52,14 @@ const DrugVerification = () => {
             }
         };
 
-        // Simulate API call delay
-        setTimeout(() => {
-            const extractedData = getData();
+        getData().then(extractedData => {
             setDrugData(extractedData);
             setLoading(false);
-        }, 1000);
+        });
     }, [location]);
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
             <header className="bg-white shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center">
@@ -58,7 +71,6 @@ const DrugVerification = () => {
                 </div>
             </header>
 
-            {/* Main Content */}
             <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {error ? (
                     <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
@@ -78,7 +90,6 @@ const DrugVerification = () => {
                     <ResultSection drugData={drugData} isLoading={loading} />
                 )}
 
-                {/* Back button */}
                 <div className="mt-8 flex justify-center">
                     <button
                         onClick={() => window.history.back()}

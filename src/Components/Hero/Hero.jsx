@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Camera, Loader2 } from 'lucide-react';
 import jsQR from 'jsqr';
+import { useNavigate } from 'react-router-dom';
+import api from '../../utils/axios';
 
-const DrugVerificationSystem = () => {
+const ScannerPage = () => {
     const [showScanner, setShowScanner] = useState(false);
-    const [scanResult, setResult] = useState(null);
     const [scanning, setScanning] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [cameraError, setCameraError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -16,7 +18,6 @@ const DrugVerificationSystem = () => {
     const scannerRef = useRef(null);
     const fileInputRef = useRef(null);
 
-    // Check if device is mobile on component mount
     useEffect(() => {
         const checkMobile = () => {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -25,21 +26,17 @@ const DrugVerificationSystem = () => {
         checkMobile();
     }, []);
 
-    // Validate QR code format (adjust this to match your actual QR code format)
     const isValidDrugQRCode = (qrData) => {
-        // Example: DRUG-AMOX-500MG-BT20240125-PHARMACO
         const drugQrPattern = /^DRUG-[A-Z]+-\d+[A-Z]*-[A-Z0-9]+-[A-Z]+$/;
         return drugQrPattern.test(qrData);
     };
 
-    // Native scanner for mobile devices
     const useNativeScanner = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
         }
     };
 
-    // Start camera and QR scanning
     const handleScan = async () => {
         setCameraError(null);
         setIsLoading(false);
@@ -76,7 +73,6 @@ const DrugVerificationSystem = () => {
         }
     };
 
-    // Stop camera stream and close scanner
     const closeScanner = () => {
         setShowScanner(false);
         setScanning(false);
@@ -95,7 +91,6 @@ const DrugVerificationSystem = () => {
         }
     };
 
-    // Process video frames to detect QR codes
     const scanQRCode = () => {
         if (!scanning || !videoRef.current || !canvasRef.current) return;
 
@@ -121,17 +116,30 @@ const DrugVerificationSystem = () => {
         scannerRef.current = requestAnimationFrame(scanQRCode);
     };
 
-    // Handle successful QR scan
     const handleQrResult = async (result) => {
         if (isValidDrugQRCode(result)) {
             setIsLoading(true);
             try {
-                // Simulate API verification
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                setResult(result);
-                closeScanner();
+                const [_, drugName, strength, batchNumber, manufacturer] = result.split('-');
+
+                const response = await api.get('/drug/verify', {
+                    params: {
+                        drug_name: drugName,
+                        batch_number: batchNumber,
+                        manufacturer: manufacturer,
+                        strength: strength
+                    }
+                });
+
+                navigate('/verify', {
+                    state: {
+                        drugData: response.data,
+                        scannedData: result
+                    }
+                });
             } catch (error) {
-                setCameraError('Verification failed. Please try again.');
+                console.error('Verification error:', error);
+                setCameraError(error.response?.data?.message || 'Verification failed. Please try again.');
             } finally {
                 setIsLoading(false);
             }
@@ -141,7 +149,6 @@ const DrugVerificationSystem = () => {
         }
     };
 
-    // Start scanning when video becomes visible and ready
     useEffect(() => {
         if (scanning && videoRef.current) {
             const startScanning = () => {
@@ -165,7 +172,6 @@ const DrugVerificationSystem = () => {
         }
     }, [scanning]);
 
-    // Clean up on component unmount
     useEffect(() => {
         return () => {
             if (scannerRef.current) {
@@ -179,77 +185,8 @@ const DrugVerificationSystem = () => {
         };
     }, []);
 
-    // Results Section Component
-    const ResultsSection = ({ scanResult }) => {
-        // Parse the QR code data (adjust based on your actual format)
-        const [drugName, strength, batchNumber, manufacturer] = scanResult.split('-');
-
-        const drugData = {
-            name: drugName || "Unknown",
-            strength: strength || "Unknown",
-            manufacturer: manufacturer || "Unknown",
-            batchNumber: batchNumber || "Unknown",
-            expiryDate: "2026-01-25", // This would come from your database
-            verified: true
-        };
-
-        return (
-            <section className="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mb-12">
-                <div className="bg-green-700 text-white py-3 px-4">
-                    <h2 className="text-xl font-semibold">Verification Results</h2>
-                </div>
-                <div className="p-6">
-                    {drugData.verified ? (
-                        <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-md flex items-center">
-                            <span className="text-green-600 text-2xl mr-2">✓</span>
-                            <span>Authentic Product Verified</span>
-                        </div>
-                    ) : (
-                        <div className="mb-4 p-3 bg-red-100 text-red-800 rounded-md flex items-center">
-                            <span className="text-red-600 text-2xl mr-2">✗</span>
-                            <span>Warning: Verification Failed</span>
-                        </div>
-                    )}
-
-                    <div className="border rounded-md overflow-hidden">
-                        <table className="w-full">
-                            <tbody>
-                                <tr className="border-b">
-                                    <td className="py-2 px-4 bg-gray-50 font-medium">Product Name</td>
-                                    <td className="py-2 px-4">{drugData.name}</td>
-                                </tr>
-                                <tr className="border-b">
-                                    <td className="py-2 px-4 bg-gray-50 font-medium">Strength</td>
-                                    <td className="py-2 px-4">{drugData.strength}</td>
-                                </tr>
-                                <tr className="border-b">
-                                    <td className="py-2 px-4 bg-gray-50 font-medium">Manufacturer</td>
-                                    <td className="py-2 px-4">{drugData.manufacturer}</td>
-                                </tr>
-                                <tr className="border-b">
-                                    <td className="py-2 px-4 bg-gray-50 font-medium">Batch Number</td>
-                                    <td className="py-2 px-4">{drugData.batchNumber}</td>
-                                </tr>
-                                <tr>
-                                    <td className="py-2 px-4 bg-gray-50 font-medium">Expiry Date</td>
-                                    <td className="py-2 px-4">{drugData.expiryDate}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="mt-4 text-sm text-gray-600">
-                        <p>Scanned Code: {scanResult}</p>
-                        <p className="mt-2">Verified on: {new Date().toLocaleString()}</p>
-                    </div>
-                </div>
-            </section>
-        );
-    };
-
     return (
         <div className="flex flex-col min-h-screen">
-            {/* Hidden file input for mobile native scanning */}
             <input
                 type="file"
                 ref={fileInputRef}
@@ -257,15 +194,12 @@ const DrugVerificationSystem = () => {
                 capture="environment"
                 className="hidden"
                 onChange={(e) => {
-                    // In a real app, you would process the image to detect QR codes
-                    // For demo, we'll simulate a valid drug QR code
-                    handleQrResult('AMOX-500MG-BT20240125-PHARMACO');
+                    // In a real app, process the image to detect QR codes
+                    handleQrResult('DRUG-PANADOL-500MG-BT20240125-PHARMACO');
                 }}
             />
 
-            {/* Main Content */}
             <main className="container mx-auto px-4 py-8 flex-grow">
-                {/* Hero Section */}
                 <section className="text-center py-8 mb-12">
                     <h3 className="text-4xl font-bold text-gray-800 mb-4">Drug Manufacturer Verification System</h3>
                     <h3 className="text-2xl font-bold text-gray-800 mb-4">SCAN. VERIFY. SECURE</h3>
@@ -274,7 +208,6 @@ const DrugVerificationSystem = () => {
                     </p>
                 </section>
 
-                {/* Verification Box */}
                 <section className="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mb-12">
                     <div className="bg-green-700 text-white py-3 px-4">
                         <h2 className="text-xl font-semibold">Drug Verification</h2>
@@ -299,10 +232,6 @@ const DrugVerificationSystem = () => {
                     </div>
                 </section>
 
-                {/* Results Section (Conditionally Rendered) */}
-                {scanResult && <ResultsSection scanResult={scanResult} />}
-
-                {/* How It Works */}
                 <section className="mb-12">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">How It Works</h2>
                     <div className="grid md:grid-cols-3 gap-8">
@@ -331,7 +260,6 @@ const DrugVerificationSystem = () => {
                 </section>
             </main>
 
-            {/* QR Scanner Modal */}
             {showScanner && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
                     <div className="bg-white p-4 rounded-lg w-full max-w-md">
@@ -385,4 +313,4 @@ const DrugVerificationSystem = () => {
     );
 };
 
-export default DrugVerificationSystem;
+export default ScannerPage;

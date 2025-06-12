@@ -14,12 +14,20 @@ const DrugQRCode = () => {
         );
     }
 
-    // Generate verification URL with encoded drug data
+    // Generate verification URL with formatted drug data
     const generateVerificationUrl = () => {
-        // Encode drug data as URL parameter
-        const encodedData = encodeURIComponent(JSON.stringify(drugData));
+        if (!drugData) return "";
 
-        // This should be your verification page URL
+        const formattedData = {
+            drugName: drugData.drugName || drugData.name,
+            category: drugData.category,
+            dosageForm: drugData.dosage_form || drugData.dosageForm,
+            manufactureDate: drugData.manufacturing_date,
+            expiryDate: drugData.expiry_date,
+            registrationDate: drugData.created_at?.split("T")[0] || new Date().toISOString().split("T")[0],
+        };
+
+        const encodedData = encodeURIComponent(JSON.stringify(formattedData));
         const baseUrl = window.location.origin;
         return `${baseUrl}/verification?data=${encodedData}`;
     };
@@ -35,7 +43,6 @@ const DrugQRCode = () => {
             const ctx = canvas.getContext('2d');
             const img = new Image();
 
-            // Set canvas dimensions to match the SVG
             canvas.width = svg.width.baseVal.value;
             canvas.height = svg.height.baseVal.value;
 
@@ -44,7 +51,7 @@ const DrugQRCode = () => {
                 const pngUrl = canvas.toDataURL('image/png');
                 const downloadLink = document.createElement('a');
                 downloadLink.href = pngUrl;
-                downloadLink.download = `${drugData.drugName}_${drugData.batchNumber}.png`;
+                downloadLink.download = `${drugData.drugName || drugData.name}_${drugData.batchNumber || drugData.batch_number}.png`;
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
@@ -56,7 +63,7 @@ const DrugQRCode = () => {
 
     return (
         <div className="flex h-screen overflow-hidden bg-gray-50">
-            {/* Sidebar - This would be your shared Layout component */}
+            {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-gray-200 hidden md:block">
                 <div className="p-6 flex items-center space-x-3 border-b border-gray-200">
                     <i className="fas fa-pills text-green-600 text-2xl"></i>
@@ -64,6 +71,7 @@ const DrugQRCode = () => {
                 </div>
             </aside>
 
+            {/* Main content */}
             <main className="flex-1 overflow-y-auto p-6">
                 <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-sm p-6">
                     <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Drug Registration Successful</h1>
@@ -80,21 +88,22 @@ const DrugQRCode = () => {
                                 bgColor="#ffffff"
                             />
                         </div>
-                        <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+
+                        <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 mb-4">
                             <button
                                 onClick={downloadQRCode}
                                 className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors"
                             >
                                 <i className="fas fa-download mr-2"></i> Download QR Code
                             </button>
-                            {/* <a
-                                href={verificationUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors text-center"
-                            >
-                                <i className="fas fa-external-link-alt mr-2"></i> Test Verification
-                            </a> */}
+                        </div>
+
+                        {/* Manufacturer Info */}
+                        <div className="text-center">
+                            <p className="text-lg font-semibold text-gray-700">
+                                Manufacturer: <span className="text-green-600">{drugData.manufacturer}</span>
+                            </p>
+                            <p className="text-green-700 font-medium">This manufacturer is authentic and verified.</p>
                         </div>
                     </div>
 
