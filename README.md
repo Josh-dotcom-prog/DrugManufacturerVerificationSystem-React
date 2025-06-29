@@ -2,6 +2,14 @@
 
 Drug Manufacturer Verification system is one that enables manufacturers signup, register drugs and generate qrcodes that will be printed on each drug they have registered in the system. The Qrcode will have information about the drug embedded to it. 
 
+## GROUP 3 MEMBERS 
+
+1. EDYANGU JOSHUA   2023/DCS/DAY/1511
+2. BABIRYE POLYN    2023/DCS/DAY/1507
+3. LUBEGA JONATHAN  2023/DCS/DAY/0437
+4. SSERUNJOJI SAMUEL 2023/DCS/DAY/1080G
+5. BUULE KENNETH    2023/DCS/DAY/0252
+
 ## TECH STACK 
 
 ##FRONTEND
