@@ -1,13 +1,19 @@
 # DrugManufacturerVerificationSystem-React
 
+Drug Manufacturer Verification system is one that enables manufacturers signup, register drugs and generate qrcodes that will be printed on each drug they have registered in the system. The Qrcode will have information about the drug embedded to it. 
+
 ## TECH STACK 
 
+##FRONTEND
+- [Tailwind css] (https://) - CSS framework
 - [Reactjs](https://) - Javascript frontend framework
+### BACKEND
 - [Postgresql](https://www.postgresql.org/) - SQL Database 
 - [SqlAlchemy](https://www.sqlalchemy.org/) - Python ORM for SQL Database
 - [Alembic](https://alembic.sqlalchemy.org/en/latest/) - Python Database Migration Tool
 
-### Create React Application
+### System requirements (frontend) 
+
 
 ```
 npm create vite@latest DrugManufacturerVerificationSystem-React -- --template react
