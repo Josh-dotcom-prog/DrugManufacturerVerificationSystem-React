@@ -12,7 +12,7 @@ Drug Manufacturer Verification system is one that enables manufacturers signup, 
 
 ## TECH STACK 
 
-##FRONTEND
+## FRONTEND
 - [Tailwind css](https://) - CSS framework
 - [Reactjs](https://) - Javascript frontend framework
 ### BACKEND
