@@ -16,7 +16,9 @@ Drug Manufacturer Verification system is one that enables manufacturers signup, 
 ### FRONTEND
 - [Tailwind css](https://) - CSS framework
 - [Reactjs](https://) - Javascript frontend framework
+
 ### BACKEND
+Repository:https://github.com/Josh-dotcom-prog/DrugManufacturerVerificationSystem-Backend
 - [FastAPI](https://fastapi.tiangolo.com/) - Python backend framework
 - [Postgresql](https://www.postgresql.org/) - SQL Database 
 - [SqlAlchemy](https://www.sqlalchemy.org/) - Python ORM for SQL Database
